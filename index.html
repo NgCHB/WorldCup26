@@ -1,34 +1,322 @@
 <!doctype html>
 <html lang="en">
- <head><script>window["__codeletBootstrap__"]=JSON.parse('{"A":"A","B":"20260709-23-f48f0ac"}');</script><script src="/_sdk/f432b76fb310b513.telemetry_sdk.js" integrity="sha512-9FJQ55EKmmqhyyik8BhrMVfm0+iYYfb8uOlRsjtkxJMEI97qOVEI4PnHohDjQAtvAep0IOEpdQ64eki0sz62ug=="></script>
+ <head><script>window["__codeletBootstrap__"]=JSON.parse('{"A":"A","B":"20260710-01-5ff951d"}');</script><script src="https://www.canva.com/ai/code/thread/47496334-ecc1-45ea-ba3b-ab1859921db3/_sdk/f432b76fb310b513.telemetry_sdk.js" integrity="sha512-9FJQ55EKmmqhyyik8BhrMVfm0+iYYfb8uOlRsjtkxJMEI97qOVEI4PnHohDjQAtvAep0IOEpdQ64eki0sz62ug=="></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FIFA World Cup 2026 - Chemistry Challenge</title>
+  <title>Salt Prep World Cup</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;600;800;900&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;900&amp;display=swap" rel="stylesheet">
   <style>
-        body { font-family: 'Raleway', sans-serif; }
-        .hero-overlay { background: linear-gradient(180deg, rgba(10,10,20,0.6) 0%, rgba(10,10,20,0.92) 100%); }
+        body { font-family: 'DM Sans', sans-serif; }
+        .stadium-bg {
+            background: linear-gradient(135deg, #0a1628 0%, #1a2744 40%, #0d2e1a 100%);
+        }
+        @keyframes goalFlash {
+            0%,100% { opacity:1; transform:scale(1); }
+            50% { opacity:0.8; transform:scale(1.05); }
+        }
+        @keyframes shake {
+            0%,100% { transform:translateX(0); }
+            25% { transform:translateX(-5px); }
+            75% { transform:translateX(5px); }
+        }
+        .goal-anim { animation: goalFlash 0.5s ease; }
+        .shake-anim { animation: shake 0.4s ease; }
+        .country-btn:hover { transform:scale(1.08); }
+        .country-btn { transition: transform 0.15s; }
+        .option-btn { transition: all 0.2s; }
+        .option-btn:hover:not(:disabled) { transform:translateY(-2px); box-shadow:0 4px 12px rgba(0,0,0,0.3); }
+        .progress-segment { transition: background-color 0.4s; }
+        @keyframes confetti { 0%{transform:translateY(0) rotate(0)} 100%{transform:translateY(100vh) rotate(720deg)} }
+        .confetti-piece { position:fixed; width:10px; height:10px; animation: confetti 2.5s linear forwards; pointer-events:none; z-index:100; }
     </style>
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js" type="text/javascript"></script>
-  <script src="/_sdk/0179d719c431a79e.data_sdk.js" type="text/javascript" integrity="sha512-OsRvJkI5GkC3MJQcgotQYotpzrMSX415GiKKgvYdxQEEkzD/fdchShO2FMSy0PJr/tiINMXOk5Vl2zAgg6bUiA=="></script>
-  <script src="/_sdk/9432170dbd2ae0df.resizing_sdk.js" type="text/javascript" integrity="sha512-FeT+58sb1f9ejWPWFjCbJvTT+SDwGV+ngrHUnlO7TWEOoqwOLj6p256kO3vOL7DIWl1cIgrobiof8v2bOigwPg=="></script>
+  <script src="https://www.canva.com/ai/code/thread/47496334-ecc1-45ea-ba3b-ab1859921db3/_sdk/0179d719c431a79e.data_sdk.js" type="text/javascript" integrity="sha512-OsRvJkI5GkC3MJQcgotQYotpzrMSX415GiKKgvYdxQEEkzD/fdchShO2FMSy0PJr/tiINMXOk5Vl2zAgg6bUiA=="></script>
+  <script src="https://www.canva.com/ai/code/thread/47496334-ecc1-45ea-ba3b-ab1859921db3/_sdk/9432170dbd2ae0df.resizing_sdk.js" type="text/javascript" integrity="sha512-FeT+58sb1f9ejWPWFjCbJvTT+SDwGV+ngrHUnlO7TWEOoqwOLj6p256kO3vOL7DIWl1cIgrobiof8v2bOigwPg=="></script>
  </head>
- <body data-template-id="__page-root" class="min-h-screen bg-gray-950 text-white">
-  <header class="relative overflow-hidden"><img data-template-id="hero-bg" class="canva-image absolute inset-0 w-full h-full object-cover" loading="lazy">
-   <div class="hero-overlay relative z-10 flex flex-col items-center justify-center text-center px-6 py-20 md:py-36"><img data-template-id="trophy-img" class="canva-image w-36 md:w-52 mb-6 drop-shadow-2xl" loading="lazy">
-    <h1 data-template-id="hero-title" class="canva-text font-black uppercase tracking-tight leading-none mb-3"></h1>
-    <p data-template-id="hero-subtitle" class="canva-text max-w-xl mb-10"></p>
-    <nav class="w-full max-w-xs"><label data-template-id="nav-label" for="page-nav" class="canva-text block mb-2 font-semibold"></label> <select id="page-nav" class="w-full px-4 py-3 rounded-lg bg-gray-900 border border-gray-700 text-white font-semibold text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-yellow-500"> <option value="" disabled selected>-- Select a page --</option> <option value="#play">⚗️ Play Game</option> <option value="#leaderboard">🏆 Leaderboard</option> <option value="#rules">📖 Rules</option> <option value="#about">ℹ️ About</option> </select>
-    </nav>
+ <body data-template-id="__page-root" class="min-h-screen stadium-bg text-white overflow-x-hidden"><!-- START SCREEN -->
+  <div id="start-screen" class="w-full min-h-screen flex flex-col items-center justify-start p-4">
+   <header class="text-center mt-8 mb-4">
+    <h1 data-template-id="game-title" class="canva-text text-4xl md:text-5xl font-black tracking-tight"></h1>
+    <p data-template-id="game-subtitle" class="canva-text mt-2 text-lg opacity-80"></p>
+   </header>
+   <p data-template-id="select-label" class="canva-text text-sm font-medium mb-3 uppercase tracking-widest opacity-70"></p>
+   <div id="country-grid" class="grid grid-cols-6 sm:grid-cols-8 md:grid-cols-12 gap-2 max-w-4xl w-full mb-6"></div>
+   <div id="selected-display" class="hidden flex items-center gap-3 mb-4"><span id="selected-flag" class="text-4xl"></span> <span id="selected-name" class="font-bold text-xl"></span>
+   </div><button data-template-id="start-btn" id="start-btn" class="canva-button px-8 py-3 rounded-full font-bold text-lg hidden transition-all hover:scale-105"></button>
+  </div><!-- GAME SCREEN -->
+  <div id="game-screen" class="w-full min-h-screen flex flex-col items-center p-4 hidden">
+   <div class="w-full max-w-2xl"><!-- Top bar -->
+    <div class="flex items-center justify-between mb-6">
+     <div class="flex flex-col items-center gap-2">
+      <div class="w-20 h-20 rounded-full border-4 border-white/40 flex items-center justify-center bg-white/10 shadow-lg"><span id="player-flag" class="text-6xl"></span>
+      </div><span id="stage-label" class="font-bold text-xs uppercase tracking-wide text-emerald-400 text-center"></span>
+     </div>
+     <div class="flex flex-col items-center gap-2">
+      <span class="font-bold text-sm uppercase text-white/60">vs</span>
+     </div>
+     <div class="flex flex-col items-center gap-2">
+      <div class="w-20 h-20 rounded-full border-4 border-white/40 flex items-center justify-center bg-white/10 shadow-lg"><span id="opponent-flag" class="text-6xl"></span>
+      </div><span id="opponent-name" class="font-bold text-xs uppercase tracking-wide text-blue-400 text-center"></span>
+     </div>
+    </div><!-- Progress bar -->
+    <div class="flex gap-1 mb-6" id="progress-bar"></div><!-- Commentary -->
+    <div id="commentary" class="text-center text-lg font-medium h-8 mb-2 text-yellow-300"></div><!-- Question card -->
+    <div class="bg-white/10 backdrop-blur rounded-2xl p-6 border border-white/10">
+     <p data-template-id="question-text" class="canva-text text-center font-medium text-lg mb-1 opacity-60"></p>
+     <p id="question-content" class="text-center font-semibold text-xl mb-6"></p>
+     <div id="options-container" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+    </div><!-- Lifelines -->
+    <div class="flex justify-center gap-4 mt-5"><button data-template-id="var-btn" id="var-btn" class="canva-button px-4 py-2 rounded-lg font-semibold text-sm transition-all hover:scale-105"></button> <button data-template-id="sub-btn" id="sub-btn" class="canva-button px-4 py-2 rounded-lg font-semibold text-sm transition-all hover:scale-105"></button>
+    </div>
    </div>
-  </header>
+  </div><!-- WIN SCREEN -->
+  <div id="win-screen" class="w-full min-h-screen flex flex-col items-center justify-center p-4 hidden"><img data-template-id="trophy-img" class="canva-image w-80 h-80 object-contain mb-6" loading="lazy">
+   <h1 data-template-id="win-heading" class="canva-text text-4xl font-black text-center"></h1>
+   <p id="win-country" class="text-2xl mt-2 font-bold text-yellow-300"></p>
+   <p data-template-id="win-subtext" class="canva-text mt-2 opacity-70 text-center"></p><button data-template-id="restart-btn" id="play-again-btn" class="canva-button mt-8 px-8 py-3 rounded-full font-bold text-lg hover:scale-105 transition-all"></button>
+  </div><!-- ELIMINATED SCREEN -->
+  <div id="eliminated-screen" class="w-full min-h-screen flex flex-col items-center justify-center p-4 hidden">
+   <div class="text-6xl mb-4">
+    😢
+   </div>
+   <h1 data-template-id="eliminated-heading" class="canva-text text-3xl font-black text-center"></h1>
+   <p data-template-id="eliminated-subtext" class="canva-text mt-2 opacity-70 text-center"></p>
+   <p id="elim-detail" class="mt-4 text-sm opacity-50"></p><button data-template-id="retry-btn" id="retry-btn" class="canva-button mt-8 px-8 py-3 rounded-full font-bold text-lg hover:scale-105 transition-all"></button>
+  </div>
   <script src="/_sdk/719055fef2a85d14.editing_sdk.js" integrity="sha512-kFqrdGgIiTOsu307feB5Cy3JVP9IayftsmCIZ0csxYBGuBmJQPhyvcnmKR8F0fTW97h5s1gAvz3SumI8zJ6OxQ=="></script>
   <script>
-        document.getElementById('page-nav').addEventListener('change', function(e) {
-            const val = e.target.value;
-            if (val) window.location.hash = val.replace('#','');
-        });
-    </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a18be2ef1731ff83',t:'MTc4MzY0NzkwMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+const COUNTRIES = [
+    ["🇦🇷","Argentina"],["🇩🇿","Algeria"],["🇦🇺","Australia"],["🇦🇹","Austria"],["🇧🇪","Belgium"],["🇧🇦","Bosnia and Herzegovina"],
+    ["🇧🇷","Brazil"],["🇨🇦","Canada"],["🇨🇻","Cape Verde"],["🇨🇴","Colombia"],["🇭🇷","Croatia"],["🇨🇼","Curaçao"],
+    ["🇨🇿","Czechia"],["🇨🇩","DR Congo"],["🇪🇨","Ecuador"],["🇪🇬","Egypt"],["🏴󠁧󠁢󠁥","England"],["🇫🇷","France"],
+    ["🇩🇪","Germany"],["🇬🇭","Ghana"],["🇭🇹","Haiti"],["🇮🇷","Iran"],["🇮🇶","Iraq"],["🇨🇮","Ivory Coast"],
+    ["🇯🇵","Japan"],["🇯🇴","Jordan"],["🇲🇽","Mexico"],["🇲🇦","Morocco"],["🇳🇱","Netherlands"],["🇳🇿","New Zealand"],
+    ["🇳🇴","Norway"],["🇵🇦","Panama"],["🇵🇾","Paraguay"],["🇵🇹","Portugal"],["🇶🇦","Qatar"],["🇸🇦","Saudi Arabia"],
+    ["🏴󠁧󠁢󠁳󠁣󠁴󠁿","Scotland"],["🇸🇳","Senegal"],["🇿🇦","South Africa"],["🇰🇷","South Korea"],["🇪🇸","Spain"],["🇸🇪","Sweden"],
+    ["🇨🇭","Switzerland"],["🇹🇳","Tunisia"],["🇹🇷","Türkiye"],["🇺🇸","United States"],["🇺🇾","Uruguay"],["🇺🇿","Uzbekistan"]
+];
+
+const QUESTIONS = [
+    {q:"Which of these salts is insoluble in water?",opts:["Sodium chloride","Potassium nitrate","Lead(II) sulfate","Ammonium carbonate"],ans:2},
+    {q:"All nitrates are:",opts:["Insoluble","Soluble","Slightly soluble","It depends on the cation"],ans:1},
+    {q:"Which carbonate is soluble in water?",opts:["Calcium carbonate","Barium carbonate","Sodium carbonate","Lead(II) carbonate"],ans:2},
+    {q:"Barium sulfate is insoluble. Which method is best to prepare it?",opts:["Titration","Excess method with acid","Precipitation","Evaporation of seawater"],ans:2},
+    {q:"In the excess method, why is excess solid added to the acid?",opts:["To speed up the reaction","To ensure all the acid has reacted","To make the solution colourful","To increase the yield of gas"],ans:1},
+    {q:"After the excess method, why must the mixture be filtered?",opts:["To remove the water","To remove the unreacted excess solid","To crystallise the salt","To neutralise remaining acid"],ans:1},
+    {q:"Which method uses a burette and an indicator?",opts:["Precipitation","Excess method","Titration","Electrolysis"],ans:2},
+    {q:"In titration, why is the experiment repeated without indicator?",opts:["To save indicator","To obtain a pure salt without indicator contamination","To check the volume","It's not necessary"],ans:1},
+    {q:"Which salt can be prepared by reacting an insoluble base with dilute acid?",opts:["Sodium chloride","Copper(II) sulfate","Barium sulfate","Silver chloride"],ans:1},
+    {q:"All ammonium salts are:",opts:["Insoluble","Soluble","Acidic","Basic"],ans:1},
+    {q:"Silver chloride is insoluble. To prepare it, you would mix:",opts:["Silver nitrate + sodium chloride solutions","Silver metal + hydrochloric acid","Silver oxide + chlorine gas","Electrolysis of silver"],ans:0},
+    {q:"Which sulfate is insoluble?",opts:["Sodium sulfate","Copper sulfate","Barium sulfate","Zinc sulfate"],ans:2},
+    {q:"In precipitation, after mixing the two solutions, the next step is:",opts:["Heat the mixture","Filter to collect the precipitate","Add more reagent","Titrate"],ans:1},
+    {q:"Why is the precipitate washed with distilled water after filtering?",opts:["To dissolve it","To remove soluble impurities","To make it heavier","To change its colour"],ans:1},
+    {q:"Which halide is insoluble?",opts:["Sodium chloride","Potassium bromide","Lead(II) iodide","Ammonium chloride"],ans:2},
+    {q:"The excess method is suitable for preparing salts of metals that are:",opts:["Very reactive (Group I)","Moderately reactive or lower","Noble gases","Non-metals only"],ans:1},
+    {q:"Which pair of solutions would you mix to prepare lead(II) chloride by precipitation?",opts:["Lead(II) nitrate + sodium chloride","Lead metal + hydrochloric acid","Lead oxide + chlorine","Lead sulfate + calcium chloride"],ans:0},
+    {q:"In the excess method using a metal oxide and acid, how do you know the reaction is complete?",opts:["The solution turns blue","Excess solid remains undissolved after stirring","Bubbles stop forming","The temperature drops"],ans:1},
+    {q:"Why can't sodium chloride be prepared by the excess method?",opts:["NaCl is insoluble","Sodium is too reactive to add as excess solid","Sodium doesn't react with acid","NaCl doesn't crystallise"],ans:1},
+    {q:"After titration, the salt solution is obtained by:",opts:["Filtering","Evaporating to dryness immediately","Heating gently to crystallisation point then cooling","Adding more indicator"],ans:2},
+    {q:"Which of these is a correct solubility rule?",opts:["All chlorides are soluble","All chlorides are soluble except silver and lead(II) chloride","All chlorides are insoluble","Only sodium chloride is soluble"],ans:1},
+    {q:"Calcium carbonate reacting with dilute HCl is an example of:",opts:["Precipitation","Titration","Excess method (insoluble base/carbonate + acid)","Electrolysis"],ans:2},
+    {q:"What is the purpose of heating the filtrate gently after filtering in the excess method?",opts:["To decompose the salt","To evaporate water and crystallise the salt","To melt the salt","To remove dissolved gases"],ans:1},
+    {q:"Which Group I metal salt requires titration for preparation?",opts:["Copper sulfate","Zinc chloride","Sodium sulfate","Iron(II) sulfate"],ans:2},
+    {q:"In precipitation, both reactants must be:",opts:["Insoluble","Soluble (to mix as aqueous solutions)","Gases","Solid powders"],ans:1},
+    {q:"Lead(II) sulfate is insoluble. Which rule confirms this?",opts:["All sulfates are insoluble","Sulfates are soluble except barium, calcium, and lead(II) sulfate","Only sodium sulfate is soluble","Lead compounds are always soluble"],ans:1},
+    {q:"Why is crystallisation preferred over evaporating to complete dryness?",opts:["It's faster","Slow cooling produces well-formed crystals; boiling to dryness may decompose the salt","It uses less energy","There is no difference"],ans:1},
+    {q:"Which method involves exactly neutralising an acid with an alkali?",opts:["Excess method","Precipitation","Titration","Displacement"],ans:2},
+    {q:"Iron(III) hydroxide is insoluble. It can be prepared by precipitation using:",opts:["Iron(III) chloride + sodium hydroxide","Iron metal + water","Iron(III) oxide + acid","Heating iron in air"],ans:0},
+    {q:"All sodium, potassium, and ammonium salts are:",opts:["Insoluble","Soluble","Coloured","Acidic"],ans:1},
+    {q:"Which bromide is insoluble?",opts:["Sodium bromide","Potassium bromide","Silver bromide","Ammonium bromide"],ans:2},
+    {q:"In the excess method with zinc and dilute sulfuric acid, what is the excess reagent?",opts:["Sulfuric acid","Zinc metal","Water","Heat"],ans:1},
+    {q:"All phosphates are:",opts:["Soluble","Insoluble except Group I and ammonium","Slightly soluble","Acidic"],ans:1},
+    {q:"Copper(II) sulfate can be prepared by reacting:",opts:["Copper + oxygen","Copper oxide + dilute sulfuric acid","Copper(II) hydroxide + calcium sulfate","Copper metal + sodium sulfate"],ans:1},
+    {q:"When preparing a salt by titration, the pipette and burette must first be:",opts:["Dried completely","Rinsed with distilled water then the solution they will contain","Filled with concentrated acid","Heated"],ans:1},
+    {q:"Which hydroxide is soluble?",opts:["Iron(III) hydroxide","Copper(II) hydroxide","Sodium hydroxide","Calcium hydroxide"],ans:2},
+    {q:"In the displacement method, a reactive metal displaces a less reactive metal from:",opts:["A solid compound","A solution of the metal salt","An oxide","A carbonate"],ans:1},
+    {q:"Why must you use distilled water in salt preparation?",opts:["It's cheaper","To avoid introducing unwanted ions from tap water","To make the salt colourless","To speed up the reaction"],ans:1},
+    {q:"Which iodide is insoluble?",opts:["Sodium iodide","Potassium iodide","Lead(II) iodide","Ammonium iodide"],ans:2},
+    {q:"All Group I nitrates, chlorides, and sulfates are:",opts:["Insoluble","Soluble","Slightly soluble","Coloured"],ans:1},
+    {q:"When a precipitate forms, it is collected by:",opts:["Evaporation","Distillation","Filtration","Crystallisation"],ans:2},
+    {q:"In precipitation to make silver chloride, the two solutions mixed are:",opts:["Silver metal + HCl","Silver nitrate + sodium chloride","Silver oxide + chlorine gas","Silver metal + chlorine gas"],ans:1},
+    {q:"What is the indicator used in a titration to prepare a salt?",opts:["Litmus paper","Methyl orange or phenolphthalein","Iodine solution","Potassium permanganate"],ans:1},
+    {q:"Why is the excess method unsuitable for preparing sodium salts?",opts:["Sodium compounds are all insoluble","Sodium metal is too reactive to add safely as excess","Sodium doesn't react with acids","Sodium salts decompose easily"],ans:1},
+    {q:"Which carbonate is insoluble in water?",opts:["Sodium carbonate","Ammonium carbonate","Potassium carbonate","Calcium carbonate"],ans:3},
+    {q:"After filtering a precipitate, the filtrate contains:",opts:["The solid salt","Dissolved ions and soluble products","Only water","Nothing useful"],ans:1},
+    {q:"The precipitation method is best for preparing salts of:",opts:["Reactive Group I metals","Low reactivity metals with insoluble salts","All metals equally","Non-metallic compounds"],ans:1},
+    {q:"In titration, the conical flask should contain:",opts:["The acid","The alkali","A known volume of one reagent and indicator","Distilled water only"],ans:2},
+    {q:"Which method would produce the purest crystals?",opts:["Rapid evaporation","Slow cooling from a saturated solution","Heating to dryness","Adding ice"],ans:1},
+    {q:"All sulfides except Group I and ammonium are:",opts:["Soluble","Insoluble","Slightly soluble","Coloured"],ans:1},
+    {q:"When preparing a salt by neutralisation, the acid and alkali must:",opts:["Be in excess","Be in exactly equal proportions","Be cooled first","Be heated together"],ans:1},
+    {q:"Which fluoride is insoluble?",opts:["Sodium fluoride","Potassium fluoride","Calcium fluoride","Ammonium fluoride"],ans:2},
+    {q:"The purpose of using a 50cm³ burette in titration is:",opts:["To measure large volumes accurately","To dispense small volumes of titrant precisely","To store the final salt","To heat the solution"],ans:1},
+    {q:"Magnesium hydroxide is insoluble. It can be prepared by:",opts:["Magnesium + water","Magnesium sulfate + sodium hydroxide solutions","Magnesium oxide + acid","Magnesium metal + steam"],ans:1},
+    {q:"All potassium salts are:",opts:["Insoluble","Soluble","Coloured","Crystalline"],ans:1},
+];
+
+let selectedCountry = null;
+let currentQ = 0;
+let streak = 0;
+let varUsed = false;
+let subUsed = false;
+let questions = [];
+
+const STAGES = ["Group Stage","Group Stage","Group Stage","Round of 16","Quarter-final","Quarter-final","Semi-final","Semi-final","Final","Final"];
+const COMMENTARY_CORRECT = ["⚽ GOOOAL!","🎉 What a strike!","🏟️ The crowd goes wild!","💥 Unstoppable!","🔥 On fire!"];
+const COMMENTARY_WRONG = ["🧤 Saved by the keeper!","❌ Off the post!","😤 Eliminated!"];
+
+function shuffle(arr) { for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];} return arr; }
+
+function init() {
+    const grid = document.getElementById('country-grid');
+    COUNTRIES.forEach(([flag,name],i) => {
+        const btn = document.createElement('button');
+        btn.className = 'country-btn w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center text-2xl rounded-lg bg-white/10 hover:bg-white/20 border border-white/5';
+        btn.textContent = flag;
+        btn.title = name;
+        btn.setAttribute('aria-label', name);
+        btn.addEventListener('click', () => selectCountry(i));
+        grid.appendChild(btn);
+    });
+}
+
+function selectCountry(i) {
+    selectedCountry = i;
+    document.querySelectorAll('.country-btn').forEach((b,idx) => {
+        b.classList.toggle('ring-2', idx===i);
+        b.classList.toggle('ring-yellow-400', idx===i);
+        b.classList.toggle('bg-yellow-400/20', idx===i);
+    });
+    document.getElementById('selected-display').classList.remove('hidden');
+    document.getElementById('selected-flag').textContent = COUNTRIES[i][0];
+    document.getElementById('selected-name').textContent = COUNTRIES[i][1];
+    document.getElementById('start-btn').classList.remove('hidden');
+}
+
+function startGame() {
+    questions = shuffle([...QUESTIONS]).slice(0,20);
+    currentQ = 0; streak = 0; varUsed = false; subUsed = false;
+    showScreen('game-screen');
+    renderProgress();
+    showQuestion();
+}
+
+function showScreen(id) {
+    ['start-screen','game-screen','win-screen','eliminated-screen'].forEach(s => document.getElementById(s).classList.toggle('hidden', s!==id));
+}
+
+function renderProgress() {
+    const bar = document.getElementById('progress-bar');
+    bar.innerHTML = '';
+    for(let i=0;i<10;i++){
+        const seg = document.createElement('div');
+        seg.className = `progress-segment flex-1 h-3 rounded-full ${i<streak?'bg-emerald-400':'bg-white/20'}`;
+        bar.appendChild(seg);
+    }
+    document.getElementById('stage-label').textContent = STAGES[Math.min(streak,9)];
+}
+
+function showQuestion() {
+    if(streak >= 10){ winGame(); return; }
+    const q = questions[currentQ % questions.length];
+    document.getElementById('question-content').textContent = q.q;
+    const opponentIdx = Math.floor(Math.random()*48);
+    document.getElementById('opponent-flag').textContent = COUNTRIES[opponentIdx][0];
+    document.getElementById('opponent-name').textContent = COUNTRIES[opponentIdx][1];
+    document.getElementById('player-flag').textContent = COUNTRIES[selectedCountry][0];
+    document.getElementById('commentary').textContent = '';
+    document.getElementById('var-btn').disabled = varUsed;
+    document.getElementById('var-btn').classList.toggle('opacity-40', varUsed);
+    document.getElementById('sub-btn').disabled = subUsed;
+    document.getElementById('sub-btn').classList.toggle('opacity-40', subUsed);
+
+    const container = document.getElementById('options-container');
+    container.innerHTML = '';
+    q.opts.forEach((opt,i) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn px-4 py-3 rounded-xl font-medium text-left bg-white/10 border border-white/10 hover:bg-white/20';
+        btn.textContent = opt;
+        btn.dataset.idx = i;
+        btn.addEventListener('click', () => answer(i, q.ans, btn));
+        container.appendChild(btn);
+    });
+}
+
+function answer(chosen, correct, btn) {
+    const container = document.getElementById('options-container');
+    container.querySelectorAll('button').forEach(b => b.disabled = true);
+
+    if(chosen === correct) {
+        btn.classList.add('bg-emerald-500/40','border-emerald-400','goal-anim');
+        streak++;
+        document.getElementById('commentary').textContent = COMMENTARY_CORRECT[Math.floor(Math.random()*COMMENTARY_CORRECT.length)];
+        renderProgress();
+        currentQ++;
+        setTimeout(showQuestion, 1000);
+    } else {
+        btn.classList.add('bg-red-500/40','border-red-400','shake-anim');
+        container.querySelectorAll('button')[correct].classList.add('bg-emerald-500/40','border-emerald-400');
+        document.getElementById('commentary').textContent = COMMENTARY_WRONG[Math.floor(Math.random()*COMMENTARY_WRONG.length)];
+        setTimeout(eliminate, 1500);
+    }
+}
+
+function eliminate() {
+    document.getElementById('elim-detail').textContent = `You reached the ${STAGES[Math.min(streak,9)]} (${streak}/10 correct)`;
+    showScreen('eliminated-screen');
+}
+
+function winGame() {
+    showScreen('win-screen');
+    document.getElementById('win-country').textContent = `${COUNTRIES[selectedCountry][0]} ${COUNTRIES[selectedCountry][1]}`;
+    launchConfetti();
+}
+
+function launchConfetti() {
+    const colors = ['#fbbf24','#34d399','#60a5fa','#f87171','#a78bfa'];
+    for(let i=0;i<40;i++){
+        const el = document.createElement('div');
+        el.className = 'confetti-piece';
+        el.style.left = Math.random()*100+'%';
+        el.style.top = '-20px';
+        el.style.background = colors[Math.floor(Math.random()*colors.length)];
+        el.style.animationDelay = Math.random()*1.5+'s';
+        el.style.borderRadius = Math.random()>0.5?'50%':'0';
+        document.body.appendChild(el);
+        setTimeout(()=>el.remove(), 4000);
+    }
+}
+
+// Lifelines
+document.getElementById('var-btn').addEventListener('click', () => {
+    if(varUsed) return;
+    varUsed = true;
+    document.getElementById('var-btn').disabled = true;
+    document.getElementById('var-btn').classList.add('opacity-40');
+    const q = questions[currentQ % questions.length];
+    const wrongIdxs = [0,1,2,3].filter(i=>i!==q.ans);
+    shuffle(wrongIdxs);
+    const toHide = wrongIdxs.slice(0,2);
+    document.getElementById('options-container').querySelectorAll('button').forEach(b => {
+        if(toHide.includes(parseInt(b.dataset.idx))) { b.classList.add('opacity-20','pointer-events-none'); b.disabled=true; }
+    });
+});
+
+document.getElementById('sub-btn').addEventListener('click', () => {
+    if(subUsed) return;
+    subUsed = true;
+    document.getElementById('sub-btn').disabled = true;
+    document.getElementById('sub-btn').classList.add('opacity-40');
+    currentQ++;
+    showQuestion();
+});
+
+document.getElementById('start-btn').addEventListener('click', startGame);
+document.getElementById('retry-btn').addEventListener('click', () => { streak=0; currentQ=0; varUsed=false; subUsed=false; questions=shuffle([...QUESTIONS]).slice(0,20); showScreen('game-screen'); renderProgress(); showQuestion(); });
+document.getElementById('play-again-btn').addEventListener('click', () => showScreen('start-screen'));
+
+init();
+</script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a18c68f152cd3f81',t:'MTc4MzY1MzM4OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>

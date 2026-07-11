@@ -406,10 +406,26 @@ const KEY_PLAYERS = {
 const DEFAULT_PLAYERS = ["The Captain","The Star Striker","The Midfield Anchor","The Defensive Rock","The Goalkeeper"];
 function playersFor(code){ return KEY_PLAYERS[code] || DEFAULT_PLAYERS; }
 
+// Pool of possible goal minutes, including stoppage time at the end of each half
+// (e.g. 45+2, 90+6) alongside regular minutes 1-90.
+const MINUTE_POOL = (()=>{
+  const pool = [];
+  for(let i=1;i<=45;i++) pool.push(String(i));
+  for(let i=1;i<=6;i++) pool.push(`45+${i}`);
+  for(let i=46;i<=90;i++) pool.push(String(i));
+  for(let i=1;i<=6;i++) pool.push(`90+${i}`);
+  return pool;
+})();
+function minuteSortKey(m){
+  if(typeof m==="string" && m.includes("+")){
+    const [base,extra] = m.split("+").map(Number);
+    return base + extra/100;
+  }
+  return Number(m);
+}
 function randomDistinctMinutes(n){
-  const mins = new Set();
-  while(mins.size < n) mins.add(1 + Math.floor(Math.random()*90));
-  return [...mins].sort((a,b)=>a-b);
+  const shuffled = MINUTE_POOL.slice().sort(()=>Math.random()-0.5);
+  return shuffled.slice(0,n).sort((a,b)=>minuteSortKey(a)-minuteSortKey(b));
 }
 // Builds a list of scorers for one team given a goal count, grouping
 // repeated scorers (braces/hat-tricks) into a single entry with multiple minutes.
@@ -424,7 +440,7 @@ function buildScorers(team, goals){
     if(!grouped[player]){ grouped[player]=[]; order.push(player); }
     grouped[player].push(minutes[i]);
   }
-  return order.map(player=>({player, minutes: grouped[player].sort((a,b)=>a-b)}));
+  return order.map(player=>({player, minutes: grouped[player].sort((a,b)=>minuteSortKey(a)-minuteSortKey(b))}));
 }
 function generateMatchResult(country, opponent, countryWins){
   let countryGoals, opponentGoals;
@@ -766,7 +782,7 @@ function renderStart(){
       <div class="cname">${c.name}</div>
     </div>`).join("");
   return `
-    ${renderHeader("Salt | Solubility Rules")}
+    ${renderHeader("Master salt preparation. Pick your nation. Lift the trophy.")}
     <div class="panel">
       <h3 style="margin-bottom:10px;">1. Choose your country</h3>
       <input class="country-search" id="search" placeholder="Search countries...">
@@ -788,7 +804,7 @@ function renderStart(){
       </p>
       <button class="btn" id="kickoffBtn" ${!state.country?'disabled':''} style="margin-top:14px;">KICK OFF ${state.country?flagInlineTag(state.country.code,state.country.name):''}</button>
     </div>
-    <div class="footer-note"@bernardng</div>
+    <div class="footer-note">Topics: the 5 solubility rules — nitrates · Group 1 &amp; ammonium salts · sulfates · chlorides · carbonates</div>
   `;
 }
 

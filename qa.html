@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>FIFA World Cup 2026 — O Level Salt Preparation</title>
+<title>FIFA World Cup 2026 — O Level Qualitative Analysis</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Oswald:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
@@ -88,6 +88,8 @@
     gap:12px;
     max-height:420px;
     overflow-y:auto;
+    overscroll-behavior:contain;
+    scroll-behavior:auto;
     padding-right:4px;
   }
   .country-grid::-webkit-scrollbar{width:8px;}
@@ -186,19 +188,32 @@
 
   /* ---------- Match display ---------- */
   .match-row{
-    display:flex; align-items:center; justify-content:center; gap:18px;
+    display:flex; align-items:flex-start; justify-content:center; gap:18px;
     margin-bottom:6px;
   }
   .team{display:flex; flex-direction:column; align-items:center; gap:6px; flex:1;}
-  .team .flag-badge{width:84px; height:84px;}
+  .flag-score-row{display:flex; align-items:center; gap:10px; justify-content:center;}
+  .team .flag-badge{width:84px; height:84px; flex-shrink:0;}
   .team .tname{font-family:'Anton'; font-size:14px; letter-spacing:0.5px; text-align:center;}
-  .vs{font-family:'Anton'; font-size:26px; color:var(--gold); text-shadow:0 2px 0 rgba(0,0,0,0.4);}
+  .score-num{
+    font-family:'Anton'; font-size:38px; color:var(--gold); line-height:1;
+    text-shadow:0 2px 0 rgba(0,0,0,0.4); animation:pop .4s ease;
+  }
+  .scorer-list{
+    font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted);
+    text-align:center; line-height:1.6; animation:pop .4s ease;
+  }
+  .scorer-row{white-space:nowrap;}
+  .scorer-row.scorer-none{opacity:0.5;}
+  .scorer-min{color:var(--gold); opacity:0.9;}
+  .vs{font-family:'Anton'; font-size:26px; color:var(--gold); text-shadow:0 2px 0 rgba(0,0,0,0.4); margin-top:26px;}
+  .vs.dash{font-size:34px;}
   .stage-tag{
     text-align:center; font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:2px;
     color:var(--gold); text-transform:uppercase; margin-bottom:14px;
   }
 
-  /* ---------- Question card ---------- */
+  /* ---------- Question card & MCQ options ---------- */
   .qcard{margin-top:4px;}
   .qtext{font-size:19px; line-height:1.4; margin-bottom:16px; font-weight:500;}
   .options{display:flex; flex-direction:column; gap:10px;}
@@ -231,9 +246,17 @@
 
   /* ---------- Commentary banner ---------- */
   .commentary{
-    text-align:center; font-family:'Anton'; font-size:26px; letter-spacing:1px;
+    text-align:center;
     padding:14px; border-radius:14px; margin-bottom:16px;
     animation:pop .4s ease;
+    display:flex; flex-direction:column; gap:6px;
+  }
+  .commentary .score-line{
+    font-family:'Anton'; font-size:clamp(18px,5vw,24px); letter-spacing:0.5px; line-height:1.2;
+  }
+  .commentary .status-line{
+    font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:0.3px;
+    opacity:0.9; line-height:1.5;
   }
   .commentary.good{background:rgba(63,206,122,0.18); color:#7cf0a8; border:2px solid #3fce7a;}
   .commentary.bad{background:rgba(230,57,70,0.18); color:#ff9aa3; border:2px solid var(--red-card);}
@@ -320,7 +343,123 @@ const COUNTRIES = [
   ["uy","Uruguay"],["uz","Uzbekistan"],["ci","Côte d'Ivoire"]
 ].map(([code,name])=>({code,name}));
 
-/* ============ QUESTION BANK ============ */
+/* ============ KEY PLAYERS (for match commentary flavor) ============ */
+// Five well-known players per nation, used purely to generate fun,
+// randomised in-game scorelines — not an official squad list.
+const KEY_PLAYERS = {
+  "dz": ["Riyad Mahrez","Islam Slimani","Ismaël Bennacer","Ramy Bensebaini","Youcef Atal"],
+  "ar": ["Lionel Messi","Julián Álvarez","Rodrigo De Paul","Alexis Mac Allister","Enzo Fernández"],
+  "au": ["Mitchell Duke","Aaron Mooy","Craig Goodwin","Riley McGree","Jackson Irvine"],
+  "at": ["David Alaba","Marcel Sabitzer","Marko Arnautović","Konrad Laimer","Christoph Baumgartner"],
+  "be": ["Kevin De Bruyne","Romelu Lukaku","Jérémy Doku","Youri Tielemans","Leandro Trossard"],
+  "ba": ["Edin Džeko","Miralem Pjanić","Sead Kolašinac","Ermedin Demirović","Amar Dedić"],
+  "br": ["Vinícius Júnior","Rodrygo","Neymar Jr.","Casemiro","Lucas Paquetá"],
+  "cv": ["Ryan Mendes","Jamiro Monteiro","Dylan Tavares","Willy Semedo","Kenny Rocha Santos"],
+  "ca": ["Alphonso Davies","Jonathan David","Stephen Eustáquio","Cyle Larin","Tajon Buchanan"],
+  "co": ["James Rodríguez","Luis Díaz","Jefferson Lerma","Davinson Sánchez","Radamel Falcao"],
+  "hr": ["Luka Modrić","Mateo Kovačić","Ivan Perišić","Josko Gvardiol","Marcelo Brozović"],
+  "cw": ["Leandro Bacuna","Cuco Martina","Juninho Bacuna","Elson Hooi","Rangelo Janga"],
+  "cz": ["Patrik Schick","Tomáš Souček","Vladimír Coufal","Adam Hložek","Antonín Barák"],
+  "cd": ["Chancel Mbemba","Cédric Bakambu","Fiston Mayele","Yoane Wissa","Silas Katompa"],
+  "ec": ["Moisés Caicedo","Enner Valencia","Piero Hincapié","Pervis Estupiñán","Gonzalo Plata"],
+  "eg": ["Mohamed Salah","Omar Marmoush","Mohamed Elneny","Trézéguet","Ahmed Hegazy"],
+  "gb-eng": ["Harry Kane","Jude Bellingham","Bukayo Saka","Phil Foden","Declan Rice"],
+  "fr": ["Kylian Mbappé","Antoine Griezmann","Ousmane Dembélé","Aurélien Tchouaméni","Eduardo Camavinga"],
+  "de": ["Jamal Musiala","Florian Wirtz","Kai Havertz","Joshua Kimmich","Leroy Sané"],
+  "gh": ["Thomas Partey","Mohammed Kudus","Jordan Ayew","André Ayew","Iñaki Williams"],
+  "ht": ["Duckens Nazon","Frantzdy Pierrot","Steward Ceus","Ricardo Ade","Jefferson Belizaire"],
+  "ir": ["Mehdi Taremi","Sardar Azmoun","Alireza Jahanbakhsh","Ali Gholizadeh","Ramin Rezaeian"],
+  "iq": ["Aymen Hussein","Amir Al-Ammari","Youssef Amyn","Ali Jasim","Zaid Tahseen"],
+  "jp": ["Takefusa Kubo","Kaoru Mitoma","Daichi Kamada","Wataru Endo","Ritsu Doan"],
+  "jo": ["Musa Al-Taamari","Yazan Al-Naimat","Baha Faisal","Salem Al-Ajalin","Anas Bani Yaseen"],
+  "mx": ["Hirving Lozano","Santiago Giménez","Edson Álvarez","César Montes","Orbelín Pineda"],
+  "ma": ["Achraf Hakimi","Hakim Ziyech","Sofyan Amrabat","Youssef En-Nesyri","Azzedine Ounahi"],
+  "nl": ["Memphis Depay","Virgil van Dijk","Frenkie de Jong","Cody Gakpo","Xavi Simons"],
+  "nz": ["Chris Wood","Sarpreet Singh","Liberato Cacace","Marko Stamenić","Joe Bell"],
+  "no": ["Erling Haaland","Martin Ødegaard","Alexander Sørloth","Antonio Nusa","Morten Thorsby"],
+  "pa": ["José Fajardo","Adalberto Carrasquilla","César Yanis","Ismael Díaz","Eric Davis"],
+  "py": ["Miguel Almirón","Julio Enciso","Omar Alderete","Gustavo Gómez","Antonio Sanabria"],
+  "pt": ["Cristiano Ronaldo","Bernardo Silva","Bruno Fernandes","Rafael Leão","Rúben Dias"],
+  "qa": ["Akram Afif","Almoez Ali","Hassan Al-Haydos","Karim Boudiaf","Ismaeel Mohammad"],
+  "sa": ["Salem Al-Dawsari","Firas Al-Buraikan","Saleh Al-Shehri","Abdulelah Al-Malki","Sultan Al-Ghannam"],
+  "gb-sct": ["Andy Robertson","Scott McTominay","John McGinn","Che Adams","Kieran Tierney"],
+  "sn": ["Sadio Mané","Kalidou Koulibaly","Pape Matar Sarr","Ismaïla Sarr","Nicolas Jackson"],
+  "za": ["Percy Tau","Lyle Foster","Themba Zwane","Sipho Mbule","Teboho Mokoena"],
+  "kr": ["Son Heung-min","Lee Kang-in","Kim Min-jae","Hwang Hee-chan","Cho Gue-sung"],
+  "es": ["Rodri","Pedri","Lamine Yamal","Álvaro Morata","Nico Williams"],
+  "se": ["Alexander Isak","Viktor Gyökeres","Dejan Kulusevski","Emil Forsberg","Anthony Elanga"],
+  "ch": ["Granit Xhaka","Xherdan Shaqiri","Breel Embolo","Manuel Akanji","Ricardo Rodríguez"],
+  "tn": ["Youssef Msakni","Wahbi Khazri","Ellyes Skhiri","Hannibal Mejbri","Aissa Laidouni"],
+  "tr": ["Arda Güler","Hakan Çalhanoğlu","Kenan Yıldız","Barış Alper Yılmaz","Merih Demiral"],
+  "us": ["Christian Pulisic","Weston McKennie","Tyler Adams","Folarin Balogun","Gio Reyna"],
+  "uy": ["Federico Valverde","Darwin Núñez","Ronald Araújo","Manuel Ugarte","Facundo Pellistri"],
+  "uz": ["Eldor Shomurodov","Abbosbek Fayzullaev","Jaloliddin Masharipov","Otabek Shukurov","Khojiakbar Alijonov"],
+  "ci": ["Sébastien Haller","Franck Kessié","Nicolas Pépé","Wilfried Singo","Simon Adingra"],
+};
+const DEFAULT_PLAYERS = ["The Captain","The Star Striker","The Midfield Anchor","The Defensive Rock","The Goalkeeper"];
+function playersFor(code){ return KEY_PLAYERS[code] || DEFAULT_PLAYERS; }
+
+// Pool of possible goal minutes, including stoppage time at the end of each half
+// (e.g. 45+2, 90+6) alongside regular minutes 1-90.
+const MINUTE_POOL = (()=>{
+  const pool = [];
+  for(let i=1;i<=45;i++) pool.push(String(i));
+  for(let i=1;i<=6;i++) pool.push(`45+${i}`);
+  for(let i=46;i<=90;i++) pool.push(String(i));
+  for(let i=1;i<=6;i++) pool.push(`90+${i}`);
+  return pool;
+})();
+function minuteSortKey(m){
+  if(typeof m==="string" && m.includes("+")){
+    const [base,extra] = m.split("+").map(Number);
+    return base + extra/100;
+  }
+  return Number(m);
+}
+function randomDistinctMinutes(n){
+  const shuffled = MINUTE_POOL.slice().sort(()=>Math.random()-0.5);
+  return shuffled.slice(0,n).sort((a,b)=>minuteSortKey(a)-minuteSortKey(b));
+}
+// Builds a list of scorers for one team given a goal count, grouping
+// repeated scorers (braces/hat-tricks) into a single entry with multiple minutes.
+function buildScorers(team, goals){
+  if(goals<=0) return [];
+  const pool = playersFor(team.code);
+  const minutes = randomDistinctMinutes(goals);
+  const grouped = {};
+  const order = [];
+  for(let i=0;i<goals;i++){
+    const player = pool[Math.floor(Math.random()*pool.length)];
+    if(!grouped[player]){ grouped[player]=[]; order.push(player); }
+    grouped[player].push(minutes[i]);
+  }
+  return order.map(player=>({player, minutes: grouped[player].sort((a,b)=>minuteSortKey(a)-minuteSortKey(b))}));
+}
+function generateMatchResult(country, opponent, countryWins){
+  let countryGoals, opponentGoals;
+  if(countryWins){
+    countryGoals = 1 + Math.floor(Math.random()*3); // 1-3
+    opponentGoals = Math.floor(Math.random()*countryGoals); // strictly fewer: a win
+  } else {
+    opponentGoals = 1 + Math.floor(Math.random()*3); // 1-3
+    countryGoals = Math.floor(Math.random()*opponentGoals); // strictly fewer: a loss
+  }
+  return {
+    scoreText: `${country.name} ${countryGoals} – ${opponentGoals} ${opponent.name}`,
+    countryGoals,
+    opponentGoals,
+    countryScorers: buildScorers(country, countryGoals),
+    opponentScorers: buildScorers(opponent, opponentGoals),
+    countryWins,
+  };
+}
+function scorerListHtml(list){
+  if(!list || list.length===0) return `<div class="scorer-row scorer-none">—</div>`;
+  return list.map(s=>`<div class="scorer-row">${s.player} <span class="scorer-min">${s.minutes.map(m=>m+"'").join(", ")}</span></div>`).join("");
+}
+
+
+/* ============ QUALITATIVE ANALYSIS QUESTION BANK ============ */
 const EASY = [
 {q:"To test for ammonium ions (NH4+), which reagent is added and the mixture gently warmed?",o:["Dilute hydrochloric acid","Sodium hydroxide solution","Barium chloride solution","Silver nitrate solution"],a:1,e:"Warming NH4+ ions with NaOH releases ammonia gas."},
 {q:"What is the correct observation confirming the presence of ammonium ions?",o:["A pungent gas turns moist red litmus paper blue","A colourless gas relights a glowing splint","A white precipitate forms immediately","The solution turns from blue to colourless"],a:0,e:"Ammonia gas is alkaline and turns damp red litmus paper blue."},
@@ -398,11 +537,12 @@ let state = {
   varUsed:false,
   subUsed:false,
   answered:false,
-  selectedOpt:null,
-  fadedOpts:[],
+  selectedOpt:null, // index of the option tapped
+  fadedOpts:[], // indices of options removed by VAR Review (50/50)
   timeLeft:20,
   timerId:null,
-  commentary:null, // {type:'good'|'bad', text}
+  commentary:null, // {type:'good'|'bad', scoreText, statusText}
+  matchResult:null, // {scoreText, countryScorers, opponentScorers, countryWins}
 };
 
 function pickQuestion(poolName){
@@ -435,6 +575,7 @@ function loadStage(){
   state.selectedOpt = null;
   state.fadedOpts = [];
   state.commentary = null;
+  state.matchResult = null;
   state.screen = "play";
   if(state.timerEnabled){
     state.timeLeft = 20;
@@ -458,12 +599,15 @@ function handleAnswer(idx, timedOut){
   clearInterval(state.timerId);
   state.selectedOpt = idx;
   const correct = !timedOut && idx === state.currentQ.a;
+  const result = generateMatchResult(state.country, state.currentOpponent, correct);
+  state.matchResult = result;
   if(correct){
-    state.commentary = {type:"good", text: pickGoodLine()};
+    const isFinalWin = state.stageIdx === STAGES.length-1;
+    state.commentary = {type:"good", scoreText: result.scoreText, statusText: isFinalWin ? `FULL-TIME — ${state.country.name.toUpperCase()} WINS THE WORLD CUP!` : "FULL-TIME — THROUGH TO THE NEXT ROUND!"};
     spawnFloaty("⚽");
     spawnFloaty("🎉");
   } else {
-    state.commentary = {type:"bad", text: timedOut? "TIME'S UP!" : pickBadLine()};
+    state.commentary = {type:"bad", scoreText: result.scoreText, statusText: (timedOut?"⏱ TIME'S UP! ":"")+"FULL-TIME — ELIMINATED"};
   }
   render();
   setTimeout(()=>{
@@ -480,16 +624,7 @@ function handleAnswer(idx, timedOut){
       state.screen = "elim";
       render();
     }
-  }, 1600);
-}
-
-function pickGoodLine(){
-  const lines = ["GOOOAL!!","ONTO THE NEXT ROUND!","WHAT A STRIKE!","PURE CLASS!","THE CROWD GOES WILD!"];
-  return lines[Math.floor(Math.random()*lines.length)];
-}
-function pickBadLine(){
-  const lines = ["SAVED BY THE KEEPER!","OFF THE POST!","VAR CONFIRMS: WRONG!","STRAIGHT TO THE KEEPER!"];
-  return lines[Math.floor(Math.random()*lines.length)];
+  }, 2600);
 }
 
 function useVAR(){
@@ -505,7 +640,8 @@ function useSub(){
   state.subUsed = true;
   state.answered = true;
   clearInterval(state.timerId);
-  state.commentary = {type:"good", text:"SUBSTITUTION — AUTO ADVANCE!"};
+  state.commentary = {type:"good", statusText:"🔄 SUBSTITUTION MADE — Auto-advance to the next round!"};
+  state.matchResult = null;
   render();
   setTimeout(()=>{
     if(state.stageIdx === STAGES.length-1){
@@ -587,7 +723,7 @@ function renderStart(){
       <div class="cname">${c.name}</div>
     </div>`).join("");
   return `
-    ${renderHeader("Qualitative Analysis")}
+    ${renderHeader("Master qualitative analysis. Pick your nation. Lift the trophy.")}
     <div class="panel">
       <h3 style="margin-bottom:10px;">1. Choose your country</h3>
       <input class="country-search" id="search" placeholder="Search countries...">
@@ -603,12 +739,12 @@ function renderStart(){
       </div>
       <p style="font-size:13px;color:var(--muted);line-height:1.5;margin-top:10px;">
         🏟️ 10 correct answers in a row wins the Cup: <b>Friendlies (2)</b> → <b>Group Stage (3)</b> → <b>Round of 32 (1)</b> → <b>Round of 16 (1)</b> → <b>Quarter-final (1)</b> → <b>Semi-final (1)</b> → <b>Final (1)</b>.<br>
-        🟥 One wrong answer = <b>eliminated</b> — back to the Group Stage.<br>
-        🎫 Each run you get one <b>VAR Review</b> (50/50) and one <b>Substitution</b> (auto-skip a question).
+        🟥 One wrong answer = <b>eliminated</b> — back to the Friendlies.<br>
+        🎫 Each run you get one <b>VAR Review</b> (reveals a hint) and one <b>Substitution</b> (auto-skip a question).
       </p>
       <button class="btn" id="kickoffBtn" ${!state.country?'disabled':''} style="margin-top:14px;">KICK OFF ${state.country?flagInlineTag(state.country.code,state.country.name):''}</button>
     </div>
-    <div class="footer-note">HOME: </div>
+    <div class="footer-note">Topics: cation tests · anion tests · gas tests — with the reasoning behind each observation</div>
   `;
 }
 
@@ -629,7 +765,7 @@ function renderBracket(){
 function renderGoalMeter(){
   const pct = (state.stageIdx/10)*100;
   return `<div class="goalmeter-wrap">
-    <div class="goalmeter-label"><span>STREAK</span><span>${state.stageIdx} / 10 GOALS</span></div>
+    <div class="goalmeter-label"><span>STREAK</span><span>${state.stageIdx} / 10 WINS</span></div>
     <div class="goalmeter">
       <div class="goalmeter-fill" style="width:${pct}%"></div>
       <div class="goalmeter-ball" style="left:${pct}%">⚽</div>
@@ -641,6 +777,7 @@ function renderPlay(){
   const stage = STAGES[state.stageIdx];
   const q = state.currentQ;
   const opp = state.currentOpponent;
+
   const optsHtml = q.o.map((opt,i)=>{
     let cls = "opt";
     if(state.fadedOpts.includes(i)) cls += " faded";
@@ -654,11 +791,21 @@ function renderPlay(){
     </button>`;
   }).join("");
 
-  const commentaryHtml = state.commentary?`<div class="commentary ${state.commentary.type}">${state.commentary.text}</div>`:"";
+  const commentaryHtml = state.commentary?`<div class="commentary ${state.commentary.type}">
+      <div class="status-line">${state.commentary.statusText}</div>
+    </div>`:"";
   const explainHtml = state.answered? `<div class="explain-box">💡 ${q.e}</div>` : "";
   const timerHtml = state.timerEnabled? `
     <div class="timer-bar-wrap"><div class="timer-bar" id="timerbar" style="width:${(state.timeLeft/20*100)}%"></div></div>
   `:"";
+
+  const mr = state.matchResult;
+  const showScore = state.answered && mr;
+  const countryScorersHtml = showScore ? `<div class="scorer-list">${scorerListHtml(mr.countryScorers)}</div>` : "";
+  const opponentScorersHtml = showScore ? `<div class="scorer-list">${scorerListHtml(mr.opponentScorers)}</div>` : "";
+  const countryScoreHtml = showScore ? `<div class="score-num">${mr.countryGoals}</div>` : "";
+  const opponentScoreHtml = showScore ? `<div class="score-num">${mr.opponentGoals}</div>` : "";
+  const centerHtml = showScore ? `<div class="vs dash">–</div>` : `<div class="vs">VS</div>`;
 
   return `
     ${renderHeader(state.country.name+" "+flagInlineTag(state.country.code,state.country.name)+" — chasing the World Cup")}
@@ -667,9 +814,23 @@ function renderPlay(){
       ${renderGoalMeter()}
       <div class="stage-tag">${stage.label.toUpperCase()} — MATCH ${state.stageIdx+1} OF 10</div>
       <div class="match-row">
-        <div class="team"><div class="flag-badge">${flagImgTag(state.country.code,state.country.name)}</div><div class="tname">${state.country.name}</div></div>
-        <div class="vs">VS</div>
-        <div class="team"><div class="flag-badge">${flagImgTag(opp.code,opp.name)}</div><div class="tname">${opp.name}</div></div>
+        <div class="team">
+          <div class="flag-score-row">
+            <div class="flag-badge">${flagImgTag(state.country.code,state.country.name)}</div>
+            ${countryScoreHtml}
+          </div>
+          <div class="tname">${state.country.name}</div>
+          ${countryScorersHtml}
+        </div>
+        ${centerHtml}
+        <div class="team">
+          <div class="flag-score-row">
+            ${opponentScoreHtml}
+            <div class="flag-badge">${flagImgTag(opp.code,opp.name)}</div>
+          </div>
+          <div class="tname">${opp.name}</div>
+          ${opponentScorersHtml}
+        </div>
       </div>
       ${timerHtml}
       ${commentaryHtml}
@@ -722,9 +883,29 @@ function renderWin(){
 function attachHandlers(){
   if(state.screen==="start"){
     document.querySelectorAll(".country-cell").forEach(el=>{
-      el.onclick = ()=>{
+      el.onclick = (evt)=>{
+        evt.preventDefault();
+        const gridEl = document.getElementById("grid");
+        const savedScroll = gridEl ? gridEl.scrollTop : 0;
+
         state.country = COUNTRIES.find(c=>c.code===el.dataset.code);
-        render();
+        // Update selection + kickoff button in place instead of calling render(),
+        // so the scrollable country list doesn't jump back to the top.
+        document.querySelectorAll(".country-cell.selected").forEach(sel=>sel.classList.remove("selected"));
+        el.classList.add("selected");
+        const kickoff = document.getElementById("kickoffBtn");
+        if(kickoff){
+          kickoff.disabled = false;
+          kickoff.innerHTML = "KICK OFF "+flagInlineTag(state.country.code,state.country.name);
+        }
+
+        // Belt-and-braces: force the scroll position back in case any reflow
+        // (e.g. mobile webview quirks) resets it, on this frame and the next.
+        if(gridEl){
+          gridEl.scrollTop = savedScroll;
+          requestAnimationFrame(()=>{ gridEl.scrollTop = savedScroll; });
+          setTimeout(()=>{ gridEl.scrollTop = savedScroll; }, 50);
+        }
       };
     });
     const search = document.getElementById("search");

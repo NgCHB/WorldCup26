@@ -766,7 +766,7 @@ function renderStart(){
       <div class="cname">${c.name}</div>
     </div>`).join("");
   return `
-    ${renderHeader("Master salt preparation. Pick your nation. Lift the trophy.")}
+    ${renderHeader("Salt | Solubility Rules")}
     <div class="panel">
       <h3 style="margin-bottom:10px;">1. Choose your country</h3>
       <input class="country-search" id="search" placeholder="Search countries...">
@@ -788,7 +788,7 @@ function renderStart(){
       </p>
       <button class="btn" id="kickoffBtn" ${!state.country?'disabled':''} style="margin-top:14px;">KICK OFF ${state.country?flagInlineTag(state.country.code,state.country.name):''}</button>
     </div>
-    <div class="footer-note">Topics: the 5 solubility rules — nitrates · Group 1 &amp; ammonium salts · sulfates · chlorides · carbonates</div>
+    <div class="footer-note"@bernardng</div>
   `;
 }
 

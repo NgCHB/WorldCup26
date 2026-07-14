@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>FIFA World Cup 2026 — O Level Electrochemistry</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Oswald:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --pitch-dark:#0b3d24;
+    --pitch:#0f5132;
+    --pitch-light:#1a7a4c;
+    --line:#e8f5ee;
+    --gold:#f5c542;
+    --gold-deep:#c9971f;
+    --navy:#0d1b2a;
+    --navy-card:#132a3e;
+    --red-card:#e63946;
+    --sky:#8ecae6;
+    --text:#eef6f0;
+    --muted:#a9c3b4;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    min-height:100vh;
+    font-family:'Oswald',sans-serif;
+    color:var(--text);
+    background:
+      radial-gradient(circle at 50% -10%, rgba(245,197,66,0.10), transparent 55%),
+      repeating-linear-gradient(90deg, var(--pitch) 0 80px, var(--pitch-light) 80px 160px);
+    overflow-x:hidden;
+    position:relative;
+  }
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    background:
+      radial-gradient(ellipse at center, rgba(0,0,0,0) 40%, rgba(0,0,0,0.45) 100%);
+    pointer-events:none;
+    z-index:0;
+  }
+  #app{position:relative; z-index:1; max-width:900px; margin:0 auto; padding:18px 16px 60px;}
+
+  h1,h2,h3{font-family:'Anton',sans-serif; letter-spacing:0.5px; margin:0;}
+  .eyebrow{
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;
+    letter-spacing:3px;
+    text-transform:uppercase;
+    color:var(--gold);
+    opacity:0.9;
+  }
+
+  /* ---------- Top bar / stadium header ---------- */
+  .stadium-header{
+    text-align:center;
+    padding:22px 10px 14px;
+    position:relative;
+  }
+  .stadium-header h1{
+    font-size:clamp(34px,7vw,54px);
+    color:var(--gold);
+    text-shadow:0 3px 0 rgba(0,0,0,0.35), 0 0 30px rgba(245,197,66,0.25);
+    line-height:1;
+  }
+  .stadium-header p{margin:6px 0 0; color:var(--muted); font-size:15px;}
+
+  /* ---------- Panels ---------- */
+  .panel{
+    background:linear-gradient(180deg, var(--navy-card), var(--navy));
+    border:2px solid rgba(245,197,66,0.25);
+    border-radius:18px;
+    padding:22px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.04);
+    margin-bottom:18px;
+  }
+
+  /* ---------- Country grid (start screen) ---------- */
+  .country-search{
+    width:100%; padding:12px 14px; border-radius:12px; border:2px solid rgba(245,197,66,0.3);
+    background:rgba(0,0,0,0.25); color:var(--text); font-family:'Oswald'; font-size:15px; margin-bottom:14px;
+  }
+  .country-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(78px,1fr));
+    gap:12px;
+    max-height:420px;
+    overflow-y:auto;
+    overscroll-behavior:contain;
+    scroll-behavior:auto;
+    padding-right:4px;
+  }
+  .country-grid::-webkit-scrollbar{width:8px;}
+  .country-grid::-webkit-scrollbar-thumb{background:var(--gold-deep); border-radius:8px;}
+
+  .flag-badge{
+    width:64px; height:64px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    overflow:hidden;
+    background:radial-gradient(circle at 35% 30%, #ffffff, #d8e6dd 60%, #b9cfc1 100%);
+    border:3px solid var(--gold-deep);
+    box-shadow:0 4px 10px rgba(0,0,0,0.4);
+  }
+  .flag-badge img{width:100%; height:100%; object-fit:cover; display:block;}
+  .flag-inline{
+    height:0.8em; width:auto; vertical-align:-0.08em; border-radius:2px;
+    box-shadow:0 0 0 1px rgba(0,0,0,0.25); margin:0 3px; display:inline-block;
+  }
+  .country-cell{
+    display:flex; flex-direction:column; align-items:center; gap:6px;
+    cursor:pointer; padding:8px 4px; border-radius:12px;
+    transition:transform .15s ease, background .15s ease;
+    text-align:center;
+  }
+  .country-cell:hover{background:rgba(245,197,66,0.12); transform:translateY(-3px);}
+  .country-cell.selected .flag-badge{
+    border-color:var(--gold); box-shadow:0 0 0 4px rgba(245,197,66,0.35), 0 4px 14px rgba(0,0,0,0.5);
+  }
+  .country-cell .cname{font-size:11px; color:var(--muted); letter-spacing:0.5px;}
+  .country-cell.selected .cname{color:var(--gold); font-weight:600;}
+
+  .options-row{display:flex; flex-wrap:wrap; gap:18px; align-items:center; margin:14px 0 4px;}
+  .toggle-wrap{display:flex; align-items:center; gap:10px; font-size:14px; color:var(--muted);}
+  .switch{position:relative; width:46px; height:26px;}
+  .switch input{opacity:0; width:0; height:0;}
+  .slider-tog{position:absolute; cursor:pointer; inset:0; background:#3a4a42; border-radius:26px; transition:.2s;}
+  .slider-tog:before{content:""; position:absolute; height:20px; width:20px; left:3px; bottom:3px; background:var(--text); border-radius:50%; transition:.2s;}
+  .switch input:checked + .slider-tog{background:var(--gold-deep);}
+  .switch input:checked + .slider-tog:before{transform:translateX(20px);}
+
+  .btn{
+    font-family:'Anton',sans-serif; letter-spacing:1px;
+    background:linear-gradient(180deg, var(--gold), var(--gold-deep));
+    color:#28230a; border:none; border-radius:14px;
+    padding:16px 20px; font-size:19px; cursor:pointer;
+    box-shadow:0 6px 0 #8a6a12, 0 10px 18px rgba(0,0,0,0.4);
+    transition:transform .08s ease;
+    width:100%;
+  }
+  .btn:active{transform:translateY(4px); box-shadow:0 2px 0 #8a6a12, 0 4px 10px rgba(0,0,0,0.3);}
+  .btn:disabled{opacity:0.4; cursor:not-allowed; box-shadow:none;}
+  .btn.secondary{
+    background:linear-gradient(180deg,#22405a,#152c3f);
+    color:var(--text); box-shadow:0 6px 0 #0a1a26, 0 10px 18px rgba(0,0,0,0.4);
+  }
+
+  /* ---------- Bracket tracker ---------- */
+  .bracket{
+    display:flex; justify-content:space-between; align-items:center;
+    margin-bottom:10px; gap:4px; overflow-x:auto;
+  }
+  .bracket-stage{
+    flex:1; text-align:center; position:relative; padding-bottom:10px; min-width:56px;
+  }
+  .bracket-stage .dot{
+    width:16px; height:16px; border-radius:50%; margin:0 auto 6px;
+    background:#2c4437; border:2px solid #3a5a48;
+  }
+  .bracket-stage.done .dot{background:var(--gold); border-color:var(--gold-deep); box-shadow:0 0 10px rgba(245,197,66,0.7);}
+  .bracket-stage.current .dot{background:#fff; border-color:var(--gold); box-shadow:0 0 0 4px rgba(245,197,66,0.35); animation:pulse 1.2s infinite;}
+  .bracket-stage .lbl{font-size:9px; letter-spacing:0.5px; color:var(--muted); text-transform:uppercase; font-family:'JetBrains Mono',monospace;}
+  .bracket-stage.current .lbl{color:var(--gold);}
+  .bracket-line{position:absolute; top:7px; left:-50%; width:100%; height:2px; background:#2c4437; z-index:-1;}
+  .bracket-stage.done .bracket-line{background:var(--gold-deep);}
+  .bracket-stage:first-child .bracket-line{display:none;}
+  @keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.25);}}
+
+  /* ---------- Goal meter (streak) ---------- */
+  .goalmeter-wrap{margin-bottom:16px;}
+  .goalmeter-label{display:flex; justify-content:space-between; font-size:12px; color:var(--muted); font-family:'JetBrains Mono',monospace; margin-bottom:6px; letter-spacing:1px;}
+  .goalmeter{
+    position:relative; height:26px; border-radius:13px; overflow:hidden;
+    background:repeating-linear-gradient(90deg, rgba(255,255,255,0.06) 0 20px, rgba(255,255,255,0.02) 20px 40px);
+    border:2px solid rgba(245,197,66,0.3);
+  }
+  .goalmeter-fill{
+    height:100%; border-radius:13px 0 0 13px;
+    background:linear-gradient(90deg, #f5c542, #ffe27a);
+    transition:width .5s cubic-bezier(.34,1.56,.64,1);
+    position:relative;
+  }
+  .goalmeter-ball{
+    position:absolute; top:50%; transform:translate(-50%,-50%);
+    font-size:20px; transition:left .5s cubic-bezier(.34,1.56,.64,1);
+  }
+
+  /* ---------- Match display ---------- */
+  .match-row{
+    display:flex; align-items:flex-start; justify-content:center; gap:18px;
+    margin-bottom:6px;
+  }
+  .team{display:flex; flex-direction:column; align-items:center; gap:6px; flex:1;}
+  .flag-score-row{display:flex; align-items:center; gap:10px; justify-content:center;}
+  .team .flag-badge{width:84px; height:84px; flex-shrink:0;}
+  .team .tname{font-family:'Anton'; font-size:14px; letter-spacing:0.5px; text-align:center;}
+  .score-num{
+    font-family:'Anton'; font-size:38px; color:var(--gold); line-height:1;
+    text-shadow:0 2px 0 rgba(0,0,0,0.4); animation:pop .4s ease;
+  }
+  .scorer-list{
+    font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted);
+    text-align:center; line-height:1.6; animation:pop .4s ease;
+  }
+  .scorer-row{white-space:nowrap;}
+  .scorer-row.scorer-none{opacity:0.5;}
+  .scorer-min{color:var(--gold); opacity:0.9;}
+  .vs{font-family:'Anton'; font-size:26px; color:var(--gold); text-shadow:0 2px 0 rgba(0,0,0,0.4); margin-top:26px;}
+  .vs.dash{font-size:34px;}
+  .stage-tag{
+    text-align:center; font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:2px;
+    color:var(--gold); text-transform:uppercase; margin-bottom:14px;
+  }
+
+  /* ---------- Question card & MCQ options ---------- */
+  .qcard{margin-top:4px;}
+  .qtext{font-size:19px; line-height:1.4; margin-bottom:16px; font-weight:500;}
+  .options{display:flex; flex-direction:column; gap:10px;}
+  .opt{
+    text-align:left; padding:14px 16px; border-radius:12px;
+    background:rgba(255,255,255,0.05); border:2px solid rgba(255,255,255,0.08);
+    color:var(--text); font-family:'Oswald'; font-size:15.5px; cursor:pointer;
+    transition:all .15s ease; display:flex; gap:10px; align-items:center;
+  }
+  .opt:hover:not(:disabled){background:rgba(245,197,66,0.1); border-color:rgba(245,197,66,0.35);}
+  .opt .optkey{
+    font-family:'JetBrains Mono'; font-weight:700; color:var(--gold); min-width:20px;
+  }
+  .opt.correct{background:rgba(45,155,90,0.35); border-color:#3fce7a;}
+  .opt.wrong{background:rgba(230,57,70,0.3); border-color:var(--red-card);}
+  .opt.faded{opacity:0.25; pointer-events:none;}
+  .opt:disabled{cursor:default;}
+
+  .lifelines{display:flex; gap:12px; margin-top:16px;}
+  .life-btn{
+    flex:1; padding:10px; border-radius:12px; border:2px solid rgba(245,197,66,0.35);
+    background:rgba(255,255,255,0.04); color:var(--text); font-family:'JetBrains Mono'; font-size:12px;
+    cursor:pointer; text-align:center; letter-spacing:0.5px;
+  }
+  .life-btn:disabled{opacity:0.25; cursor:not-allowed;}
+  .life-btn:hover:not(:disabled){background:rgba(245,197,66,0.15);}
+
+  .timer-bar-wrap{height:8px; border-radius:4px; background:rgba(255,255,255,0.08); overflow:hidden; margin-bottom:14px;}
+  .timer-bar{height:100%; background:linear-gradient(90deg,#3fce7a,#f5c542,var(--red-card)); transition:width 1s linear;}
+
+  /* ---------- Commentary banner ---------- */
+  .commentary{
+    text-align:center;
+    padding:14px; border-radius:14px; margin-bottom:16px;
+    animation:pop .4s ease;
+    display:flex; flex-direction:column; gap:6px;
+  }
+  .commentary .score-line{
+    font-family:'Anton'; font-size:clamp(18px,5vw,24px); letter-spacing:0.5px; line-height:1.2;
+  }
+  .commentary .status-line{
+    font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:0.3px;
+    opacity:0.9; line-height:1.5;
+  }
+  .commentary.good{background:rgba(63,206,122,0.18); color:#7cf0a8; border:2px solid #3fce7a;}
+  .commentary.bad{background:rgba(230,57,70,0.18); color:#ff9aa3; border:2px solid var(--red-card);}
+  @keyframes pop{0%{transform:scale(0.7); opacity:0;}60%{transform:scale(1.08);}100%{transform:scale(1); opacity:1;}}
+
+  .explain-box{
+    background:rgba(0,0,0,0.25); border-left:4px solid var(--gold); padding:12px 14px;
+    border-radius:8px; font-size:14.5px; color:var(--muted); margin-bottom:16px; line-height:1.5;
+  }
+
+  /* ---------- Confetti ---------- */
+  .confetti-piece{
+    position:fixed; top:-20px; width:9px; height:14px; z-index:50; pointer-events:none;
+    animation:fall linear forwards;
+  }
+  @keyframes fall{
+    to{transform:translateY(110vh) rotate(540deg); opacity:0.3;}
+  }
+  .floaty{
+    position:fixed; z-index:60; font-size:26px; pointer-events:none;
+    animation:floatup 1.4s ease-out forwards;
+  }
+  @keyframes floatup{
+    0%{transform:translateY(0) scale(0.6); opacity:0;}
+    20%{opacity:1;}
+    100%{transform:translateY(-140px) scale(1.3); opacity:0;}
+  }
+
+  /* ---------- Win screen ---------- */
+  .win-screen{text-align:center;}
+  .win-screen .trophy-img{max-width:260px; width:60%; filter:drop-shadow(0 15px 25px rgba(0,0,0,0.5)); margin:10px auto 6px; animation:trophyIn 1s cubic-bezier(.34,1.56,.64,1); display:block;}
+  @keyframes trophyIn{0%{transform:scale(0) rotate(-15deg); opacity:0;}100%{transform:scale(1) rotate(0); opacity:1;}}
+  .win-screen h2{font-size:clamp(30px,6vw,46px); color:var(--gold); margin-bottom:6px; text-shadow:0 3px 0 rgba(0,0,0,0.4);}
+  .win-stat{
+    display:flex; justify-content:center; gap:26px; margin:18px 0; flex-wrap:wrap;
+  }
+  .win-stat div{background:rgba(255,255,255,0.05); border-radius:12px; padding:10px 18px; border:1px solid rgba(245,197,66,0.25);}
+  .win-stat b{display:block; font-family:'Anton'; color:var(--gold); font-size:20px;}
+  .win-stat span{font-size:11px; color:var(--muted); letter-spacing:1px;}
+
+  /* ---------- Elimination screen ---------- */
+  .elim-screen{text-align:center;}
+  .elim-screen .redcard{
+    width:70px; height:96px; background:var(--red-card); border-radius:6px; margin:10px auto 18px;
+    box-shadow:0 10px 24px rgba(230,57,70,0.5); animation:shake .5s ease;
+  }
+  @keyframes shake{0%,100%{transform:rotate(0);}25%{transform:rotate(-8deg);}75%{transform:rotate(8deg);}}
+
+  .footer-note{text-align:center; font-size:12px; color:var(--muted); margin-top:20px; opacity:0.7;}
+  .hidden{display:none !important;}
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important; transition:none !important;}
+  }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+/* ============ COUNTRY DATA ============ */
+// Flag images served from flagcdn.com (reliable cross-platform rendering, unlike emoji flags on Windows browsers)
+function flagUrl(code, height){
+  return `https://flagcdn.com/h${height||240}/${code}.png`;
+}
+function flagImgTag(code, name, cls){
+  const fallback = code.startsWith("gb-") ? "gb" : code;
+  return `<img class="${cls||''}" src="${flagUrl(code)}" alt="${name} flag" loading="lazy" onerror="this.onerror=null;this.src='${flagUrl(fallback,240)}';">`;
+}
+function flagInlineTag(code, name){
+  const fallback = code.startsWith("gb-") ? "gb" : code;
+  return `<img class="flag-inline" src="${flagUrl(code,60)}" alt="${name} flag" loading="lazy" onerror="this.onerror=null;this.src='${flagUrl(fallback,60)}';">`;
+}
+// The confirmed 48 teams at the 2026 FIFA World Cup
+const COUNTRIES = [
+  ["dz","Algeria"],["ar","Argentina"],["au","Australia"],["at","Austria"],["be","Belgium"],
+  ["ba","Bosnia and Herzegovina"],["br","Brazil"],["cv","Cabo Verde"],["ca","Canada"],["co","Colombia"],
+  ["hr","Croatia"],["cw","Curaçao"],["cz","Czechia"],["cd","DR Congo"],["ec","Ecuador"],
+  ["eg","Egypt"],["gb-eng","England"],["fr","France"],["de","Germany"],["gh","Ghana"],
+  ["ht","Haiti"],["ir","Iran"],["iq","Iraq"],["jp","Japan"],["jo","Jordan"],
+  ["mx","Mexico"],["ma","Morocco"],["nl","Netherlands"],["nz","New Zealand"],["no","Norway"],
+  ["pa","Panama"],["py","Paraguay"],["pt","Portugal"],["qa","Qatar"],["sa","Saudi Arabia"],
+  ["gb-sct","Scotland"],["sn","Senegal"],["za","South Africa"],["kr","South Korea"],["es","Spain"],
+  ["se","Sweden"],["ch","Switzerland"],["tn","Tunisia"],["tr","Türkiye"],["us","United States"],
+  ["uy","Uruguay"],["uz","Uzbekistan"],["ci","Côte d'Ivoire"]
+].map(([code,name])=>({code,name}));
+
+/* ============ KEY PLAYERS (for match commentary flavor) ============ */
+// Five well-known players per nation, used purely to generate fun,
+// randomised in-game scorelines — not an official squad list.
+const KEY_PLAYERS = {
+  "dz": ["Riyad Mahrez","Islam Slimani","Ismaël Bennacer","Ramy Bensebaini","Youcef Atal"],
+  "ar": ["Lionel Messi","Julián Álvarez","Rodrigo De Paul","Alexis Mac Allister","Enzo Fernández"],
+  "au": ["Mitchell Duke","Aaron Mooy","Craig Goodwin","Riley McGree","Jackson Irvine"],
+  "at": ["David Alaba","Marcel Sabitzer","Marko Arnautović","Konrad Laimer","Christoph Baumgartner"],
+  "be": ["Kevin De Bruyne","Romelu Lukaku","Jérémy Doku","Youri Tielemans","Leandro Trossard"],
+  "ba": ["Edin Džeko","Miralem Pjanić","Sead Kolašinac","Ermedin Demirović","Amar Dedić"],
+  "br": ["Vinícius Júnior","Rodrygo","Neymar Jr.","Casemiro","Lucas Paquetá"],
+  "cv": ["Ryan Mendes","Jamiro Monteiro","Dylan Tavares","Willy Semedo","Kenny Rocha Santos"],
+  "ca": ["Alphonso Davies","Jonathan David","Stephen Eustáquio","Cyle Larin","Tajon Buchanan"],
+  "co": ["James Rodríguez","Luis Díaz","Jefferson Lerma","Davinson Sánchez","Radamel Falcao"],
+  "hr": ["Luka Modrić","Mateo Kovačić","Ivan Perišić","Josko Gvardiol","Marcelo Brozović"],
+  "cw": ["Leandro Bacuna","Cuco Martina","Juninho Bacuna","Elson Hooi","Rangelo Janga"],
+  "cz": ["Patrik Schick","Tomáš Souček","Vladimír Coufal","Adam Hložek","Antonín Barák"],
+  "cd": ["Chancel Mbemba","Cédric Bakambu","Fiston Mayele","Yoane Wissa","Silas Katompa"],
+  "ec": ["Moisés Caicedo","Enner Valencia","Piero Hincapié","Pervis Estupiñán","Gonzalo Plata"],
+  "eg": ["Mohamed Salah","Omar Marmoush","Mohamed Elneny","Trézéguet","Ahmed Hegazy"],
+  "gb-eng": ["Harry Kane","Jude Bellingham","Bukayo Saka","Phil Foden","Declan Rice"],
+  "fr": ["Kylian Mbappé","Antoine Griezmann","Ousmane Dembélé","Aurélien Tchouaméni","Eduardo Camavinga"],
+  "de": ["Jamal Musiala","Florian Wirtz","Kai Havertz","Joshua Kimmich","Leroy Sané"],
+  "gh": ["Thomas Partey","Mohammed Kudus","Jordan Ayew","André Ayew","Iñaki Williams"],
+  "ht": ["Duckens Nazon","Frantzdy Pierrot","Steward Ceus","Ricardo Ade","Jefferson Belizaire"],
+  "ir": ["Mehdi Taremi","Sardar Azmoun","Alireza Jahanbakhsh","Ali Gholizadeh","Ramin Rezaeian"],
+  "iq": ["Aymen Hussein","Amir Al-Ammari","Youssef Amyn","Ali Jasim","Zaid Tahseen"],
+  "jp": ["Takefusa Kubo","Kaoru Mitoma","Daichi Kamada","Wataru Endo","Ritsu Doan"],
+  "jo": ["Musa Al-Taamari","Yazan Al-Naimat","Baha Faisal","Salem Al-Ajalin","Anas Bani Yaseen"],
+  "mx": ["Hirving Lozano","Santiago Giménez","Edson Álvarez","César Montes","Orbelín Pineda"],
+  "ma": ["Achraf Hakimi","Hakim Ziyech","Sofyan Amrabat","Youssef En-Nesyri","Azzedine Ounahi"],
+  "nl": ["Memphis Depay","Virgil van Dijk","Frenkie de Jong","Cody Gakpo","Xavi Simons"],
+  "nz": ["Chris Wood","Sarpreet Singh","Liberato Cacace","Marko Stamenić","Joe Bell"],
+  "no": ["Erling Haaland","Martin Ødegaard","Alexander Sørloth","Antonio Nusa","Morten Thorsby"],
+  "pa": ["José Fajardo","Adalberto Carrasquilla","César Yanis","Ismael Díaz","Eric Davis"],
+  "py": ["Miguel Almirón","Julio Enciso","Omar Alderete","Gustavo Gómez","Antonio Sanabria"],
+  "pt": ["Cristiano Ronaldo","Bernardo Silva","Bruno Fernandes","Rafael Leão","Rúben Dias"],
+  "qa": ["Akram Afif","Almoez Ali","Hassan Al-Haydos","Karim Boudiaf","Ismaeel Mohammad"],
+  "sa": ["Salem Al-Dawsari","Firas Al-Buraikan","Saleh Al-Shehri","Abdulelah Al-Malki","Sultan Al-Ghannam"],
+  "gb-sct": ["Andy Robertson","Scott McTominay","John McGinn","Che Adams","Kieran Tierney"],
+  "sn": ["Sadio Mané","Kalidou Koulibaly","Pape Matar Sarr","Ismaïla Sarr","Nicolas Jackson"],
+  "za": ["Percy Tau","Lyle Foster","Themba Zwane","Sipho Mbule","Teboho Mokoena"],
+  "kr": ["Son Heung-min","Lee Kang-in","Kim Min-jae","Hwang Hee-chan","Cho Gue-sung"],
+  "es": ["Rodri","Pedri","Lamine Yamal","Álvaro Morata","Nico Williams"],
+  "se": ["Alexander Isak","Viktor Gyökeres","Dejan Kulusevski","Emil Forsberg","Anthony Elanga"],
+  "ch": ["Granit Xhaka","Xherdan Shaqiri","Breel Embolo","Manuel Akanji","Ricardo Rodríguez"],
+  "tn": ["Youssef Msakni","Wahbi Khazri","Ellyes Skhiri","Hannibal Mejbri","Aissa Laidouni"],
+  "tr": ["Arda Güler","Hakan Çalhanoğlu","Kenan Yıldız","Barış Alper Yılmaz","Merih Demiral"],
+  "us": ["Christian Pulisic","Weston McKennie","Tyler Adams","Folarin Balogun","Gio Reyna"],
+  "uy": ["Federico Valverde","Darwin Núñez","Ronald Araújo","Manuel Ugarte","Facundo Pellistri"],
+  "uz": ["Eldor Shomurodov","Abbosbek Fayzullaev","Jaloliddin Masharipov","Otabek Shukurov","Khojiakbar Alijonov"],
+  "ci": ["Sébastien Haller","Franck Kessié","Nicolas Pépé","Wilfried Singo","Simon Adingra"],
+};
+const DEFAULT_PLAYERS = ["The Captain","The Star Striker","The Midfield Anchor","The Defensive Rock","The Goalkeeper"];
+function playersFor(code){ return KEY_PLAYERS[code] || DEFAULT_PLAYERS; }
+
+// Pool of possible goal minutes, including stoppage time at the end of each half
+// (e.g. 45+2, 90+6) alongside regular minutes 1-90.
+const MINUTE_POOL = (()=>{
+  const pool = [];
+  for(let i=1;i<=45;i++) pool.push(String(i));
+  for(let i=1;i<=6;i++) pool.push(`45+${i}`);
+  for(let i=46;i<=90;i++) pool.push(String(i));
+  for(let i=1;i<=6;i++) pool.push(`90+${i}`);
+  return pool;
+})();
+function minuteSortKey(m){
+  if(typeof m==="string" && m.includes("+")){
+    const [base,extra] = m.split("+").map(Number);
+    return base + extra/100;
+  }
+  return Number(m);
+}
+function randomDistinctMinutes(n){
+  const shuffled = MINUTE_POOL.slice().sort(()=>Math.random()-0.5);
+  return shuffled.slice(0,n).sort((a,b)=>minuteSortKey(a)-minuteSortKey(b));
+}
+// Builds a list of scorers for one team given a goal count, grouping
+// repeated scorers (braces/hat-tricks) into a single entry with multiple minutes.
+function buildScorers(team, goals){
+  if(goals<=0) return [];
+  const pool = playersFor(team.code);
+  const minutes = randomDistinctMinutes(goals);
+  const grouped = {};
+  const order = [];
+  for(let i=0;i<goals;i++){
+    const player = pool[Math.floor(Math.random()*pool.length)];
+    if(!grouped[player]){ grouped[player]=[]; order.push(player); }
+    grouped[player].push(minutes[i]);
+  }
+  return order.map(player=>({player, minutes: grouped[player].sort((a,b)=>minuteSortKey(a)-minuteSortKey(b))}));
+}
+function generateMatchResult(country, opponent, countryWins){
+  let countryGoals, opponentGoals;
+  if(countryWins){
+    countryGoals = 1 + Math.floor(Math.random()*3); // 1-3
+    opponentGoals = Math.floor(Math.random()*countryGoals); // strictly fewer: a win
+  } else {
+    opponentGoals = 1 + Math.floor(Math.random()*3); // 1-3
+    countryGoals = Math.floor(Math.random()*opponentGoals); // strictly fewer: a loss
+  }
+  return {
+    scoreText: `${country.name} ${countryGoals} – ${opponentGoals} ${opponent.name}`,
+    countryGoals,
+    opponentGoals,
+    countryScorers: buildScorers(country, countryGoals),
+    opponentScorers: buildScorers(opponent, opponentGoals),
+    countryWins,
+  };
+}
+function scorerListHtml(list){
+  if(!list || list.length===0) return `<div class="scorer-row scorer-none">—</div>`;
+  return list.map(s=>`<div class="scorer-row">${s.player} <span class="scorer-min">${s.minutes.map(m=>m+"'").join(", ")}</span></div>`).join("");
+}
+
+
+/* ============ QUALITATIVE ANALYSIS QUESTION BANK ============ */
+const EASY = [
+{q:"What is an electrolyte?",o:["A compound that conducts electricity when molten or dissolved in water, and is decomposed in the process","A gas released during electrolysis","A metal rod used to conduct electricity into a solution","A solution that never conducts electricity"],a:0,e:"An electrolyte is a compound which, when molten or in aqueous solution, contains free-moving ions that allow it to conduct electricity and be chemically decomposed."},
+{q:"What is an electrode?",o:["A type of electrolyte used only in batteries","A conductor through which electric current enters or leaves the electrolyte","A gas produced during electrolysis","A compound that cannot conduct electricity"],a:1,e:"Electrodes are conductors, often rods, that are dipped into the electrolyte to allow current to flow into and out of it."},
+{q:"At which electrode does oxidation always occur during electrolysis?",o:["Both electrodes equally","The cathode","The anode","Neither electrode"],a:2,e:"Oxidation, the loss of electrons, always takes place at the anode."},
+{q:"At which electrode does reduction always occur during electrolysis?",o:["Neither electrode","The anode","Both electrodes equally","The cathode"],a:3,e:"Reduction, the gain of electrons, always takes place at the cathode."},
+{q:"During electrolysis, positively charged ions move towards which electrode?",o:["The cathode","Both electrodes equally","Neither electrode","The anode"],a:0,e:"Positive ions (cations) are attracted to and move towards the negatively charged cathode."},
+{q:"During electrolysis, negatively charged ions move towards which electrode?",o:["Neither electrode","The anode","Both electrodes equally","The cathode"],a:1,e:"Negative ions (anions) are attracted to and move towards the positively charged anode."},
+{q:"In the electrolysis of molten sodium chloride, what is formed at the cathode?",o:["Hydrogen gas","Chlorine gas","Sodium metal","Oxygen gas"],a:2,e:"Na+ ions are reduced (gain electrons) at the cathode to form sodium metal."},
+{q:"In the electrolysis of molten sodium chloride, what is formed at the anode?",o:["Oxygen gas","Sodium metal","Hydrogen gas","Chlorine gas"],a:3,e:"Cl- ions are oxidised (lose electrons) at the anode to form chlorine gas."},
+{q:"A simple cell is basically made up of:",o:["Two different metal electrodes and an electrolyte, connected by an external circuit","An electrolyte with no electrodes at all","Two identical metal electrodes and no electrolyte","One metal electrode and pure water only"],a:0,e:"A simple cell generates a voltage using two different metals dipped in an electrolyte, connected externally to allow electron flow."},
+{q:"In a simple cell, what mainly determines the voltage produced?",o:["The size of the container used","The difference in reactivity between the two metal electrodes used","The colour of the electrolyte used","The temperature of the room only"],a:1,e:"A greater difference in reactivity between the two metals results in a greater voltage being produced."},
+{q:"Electroplating is the process of:",o:["Melting two metals together to form an alloy","Converting a metal into a gas using electricity","Depositing a thin layer of metal onto an object using electrolysis","Removing all metal ions from a solution using heat"],a:2,e:"Electroplating uses electrolysis to coat an object with a thin, even layer of another metal."},
+{q:"In electroplating, the object to be plated is placed as which electrode?",o:["Neither electrode","The anode","Both electrodes","The cathode"],a:3,e:"The object to be plated is made the cathode, so that metal ions are reduced and deposited onto its surface."},
+{q:"What is the only product formed by a hydrogen-oxygen fuel cell during normal operation?",o:["Water","Chlorine gas","Sulfur dioxide","Carbon dioxide"],a:0,e:"Hydrogen and oxygen combine within the fuel cell to produce electricity and water as the only product."},
+{q:"An electrode that does not take part chemically in the electrode reactions is called a(n):",o:["Reactive electrode","Inert electrode","Ionic electrode","Active electrode"],a:1,e:"Inert electrodes, such as carbon (graphite) or platinum, simply provide a surface for reactions without themselves reacting."},
+{q:"During electrolysis, electric current is carried through the electrolyte by:",o:["Neutrons","Delocalised electrons","Moving ions","Protons only"],a:2,e:"Unlike in a metal wire, current in an electrolyte is carried by the movement of free ions towards the electrodes."},
+{q:"Which particle flows through the external wire connecting the electrodes to the power supply during electrolysis?",o:["Neutrons","Ions","Protons","Electrons"],a:3,e:"Electrons flow through the external circuit, while ions carry the current through the electrolyte itself."},
+{q:"What is the name given to the loss of electrons?",o:["Oxidation","Reduction","Precipitation","Neutralisation"],a:0,e:"Oxidation is defined as the loss of electrons by a species."},
+{q:"What is the name given to the gain of electrons?",o:["Precipitation","Reduction","Oxidation","Neutralisation"],a:1,e:"Reduction is defined as the gain of electrons by a species."},
+{q:"What must the electrolyte contain for electroplating to successfully coat an object with a chosen metal?",o:["A gas dissolved in water","Ions of the object's own metal only","Ions of the metal being deposited","Only water and no dissolved ions"],a:2,e:"The electrolyte must supply ions of the metal to be plated so they can be reduced and deposited onto the object at the cathode."},
+{q:"What effect does electroplating typically have on an object's resistance to corrosion?",o:["It only affects the object's mass, not corrosion","It has no effect on corrosion resistance","It decreases resistance to corrosion","It increases resistance to corrosion"],a:3,e:"A plated layer of a more resistant or less reactive metal helps protect the underlying object from corrosion."},
+];
+
+const MEDIUM = [
+{q:"Why can molten sodium chloride conduct electricity, whereas solid sodium chloride cannot?",o:["Solid sodium chloride does not contain any ions at all","In the solid lattice, ions are held in fixed positions and cannot move, but in the molten state the ions are free to move and carry charge","Molten sodium chloride contains delocalised electrons like a metal","Solid sodium chloride conducts electricity just as well as the molten form"],a:1,e:"Only when the rigid ionic lattice breaks down (on melting) can the ions move freely enough to carry an electric current."},
+{q:"Which half-equation correctly represents the reaction occurring at the cathode during electrolysis of molten sodium chloride?",o:["2H<sup>+</sup> + 2e<sup>-</sup> → H<sub>2</sub>","4OH<sup>-</sup> → O<sub>2</sub> + 2H<sub>2</sub>O + 4e<sup>-</sup>","Na<sup>+</sup> + e<sup>-</sup> → Na","2Cl<sup>-</sup> → Cl<sub>2</sub> + 2e<sup>-</sup>"],a:2,e:"Sodium ions gain electrons (reduction) at the cathode to form sodium metal."},
+{q:"Which half-equation correctly represents the reaction occurring at the anode during electrolysis of molten sodium chloride?",o:["2H<sup>+</sup> + 2e<sup>-</sup> → H<sub>2</sub>","Na<sup>+</sup> + e<sup>-</sup> → Na","Cu<sup>2+</sup> + 2e<sup>-</sup> → Cu","2Cl<sup>-</sup> → Cl<sub>2</sub> + 2e<sup>-</sup>"],a:3,e:"Chloride ions lose electrons (oxidation) at the anode to form chlorine gas."},
+{q:"Why is hydrogen gas, rather than sodium metal, produced at the cathode when dilute aqueous sodium chloride is electrolysed?",o:["Hydrogen ions are preferentially discharged over sodium ions because hydrogen is lower in the electrochemical series / less reactive than sodium","Hydrogen ions are always discharged before any other ion regardless of reactivity","Sodium metal cannot form in the presence of chloride ions","Sodium ions are not present in aqueous solution at all"],a:0,e:"In selective discharge, the less reactive ion (here, H+ rather than Na+) is preferentially reduced at the cathode."},
+{q:"Why is oxygen gas, rather than chlorine gas, produced at the anode when dilute aqueous sodium chloride is electrolysed?",o:["Chlorine gas cannot be produced from aqueous solutions under any circumstances","Hydroxide ions are preferentially discharged over chloride ions when the chloride ion concentration is low","Hydroxide ions are not present in the solution at all","Oxygen is always produced regardless of which anion is present"],a:1,e:"With a dilute chloride concentration, hydroxide ions from water are preferentially discharged and oxidised to oxygen gas."},
+{q:"Why does the product at the anode change to chlorine gas, rather than oxygen, when concentrated aqueous sodium chloride is electrolysed?",o:["Concentrated sodium chloride solution no longer contains any hydroxide ions","Chlorine gas can only ever form in molten electrolytes","The high concentration of chloride ions overrides the usual selective discharge order, so chloride ions are discharged preferentially over hydroxide ions","Oxygen gas is impossible to produce from any aqueous solution"],a:2,e:"When chloride ions are present in a much higher concentration, they are discharged preferentially at the anode despite hydroxide normally being favoured in dilute solution."},
+{q:"Why is copper metal, rather than hydrogen gas, deposited at the cathode when copper(II) sulfate solution is electrolysed using inert electrodes?",o:["Copper ions cannot be reduced under any circumstances","Hydrogen is always discharged preferentially over any metal ion","Hydrogen ions are not present in aqueous copper(II) sulfate solution","Copper ions are lower in the electrochemical series (less reactive) than hydrogen ions, so they are preferentially discharged at the cathode"],a:3,e:"Since copper is less reactive than hydrogen, Cu2+ ions are preferentially discharged and reduced to copper metal at the cathode."},
+{q:"What is observed at the inert anode during the electrolysis of copper(II) sulfate solution?",o:["Bubbles of a colourless gas (oxygen) that relights a glowing splint","A white precipitate forms around the anode","Bubbles of a pungent gas that turns damp red litmus paper blue","A pink-brown solid deposit forms on the anode"],a:0,e:"Since sulfate ions are not discharged, hydroxide ions from water are oxidised instead, releasing oxygen gas at the inert anode."},
+{q:"Why does the blue colour of copper(II) sulfate solution fade during electrolysis using inert electrodes?",o:["The blue colour is unrelated to the copper ion concentration in solution","Copper ions are removed from the solution and deposited as copper metal at the cathode, decreasing the concentration of Cu<sup>2+</sup> ions","Oxygen gas produced at the anode reacts with the blue colour to remove it","The sulfate ions in solution are being discharged at the anode, removing the colour"],a:1,e:"As Cu2+ ions are continuously deposited at the cathode without being replaced (since the anode is inert), the solution's blue colour gradually fades."},
+{q:"In the purification of copper, why must impure copper always be used as the anode?",o:["Impure copper cannot conduct electricity unless placed at the anode","So that it can be reduced and remain undissolved throughout the process","So that it can be oxidised, dissolving as copper ions into the electrolyte and leaving behind the impurities","So that pure copper is deposited directly onto the impure copper without any reaction"],a:2,e:"Placing impure copper at the anode allows it to be oxidised (lose electrons), dissolving the copper into solution while impurities are left behind."},
+{q:"In the purification of copper, why does pure copper form at the cathode?",o:["The cathode itself dissolves to form pure copper","Copper ions are oxidised at the cathode to form pure copper","Impurities from the anode travel directly to the cathode and become pure copper","Copper ions in solution gain electrons (are reduced) and are deposited as pure copper metal onto the cathode"],a:3,e:"At the cathode, Cu2+ ions are reduced, gaining electrons to be deposited as pure solid copper."},
+{q:"Why does a simple cell made from magnesium and copper produce a higher voltage than one made from zinc and copper?",o:["The difference in reactivity between magnesium and copper is greater than the difference in reactivity between zinc and copper","Magnesium is a better conductor of electricity than zinc","Zinc and copper have identical reactivity, unlike magnesium and copper","Copper reacts more strongly with magnesium than with zinc"],a:0,e:"A larger difference in reactivity between the two metals used produces a greater voltage in a simple cell."},
+{q:"Why is electroplating commonly used, for example when plating a steel spoon with silver?",o:["To convert the base metal into a completely different element","To improve appearance and/or increase resistance to corrosion, while using a cheaper base metal underneath the plated layer","To make the object significantly heavier and more expensive to produce","To remove the need for an electrolyte during the coating process"],a:1,e:"Electroplating provides an attractive, corrosion-resistant surface layer of a more expensive or more resistant metal over a cheaper base metal object."},
+{q:"What happens to the mass of the anode and cathode during the purification of copper using copper electrodes?",o:["Both electrodes decrease in mass equally","Both electrodes increase in mass equally","The anode decreases in mass as it dissolves, while the cathode increases in mass as pure copper is deposited","The anode increases in mass, while the cathode decreases in mass"],a:2,e:"As the impure copper anode dissolves (loses mass) and pure copper is deposited at the cathode (gains mass), the two masses change in opposite directions."},
+{q:"Why is it important that the electrolyte used in electroplating contains ions of the metal being deposited?",o:["So that the electrolyte can conduct electricity, regardless of which ions are present","So that the object being plated can dissolve into the electrolyte instead","The specific ions present in the electrolyte do not actually matter for electroplating","So that these ions can be reduced and deposited onto the object at the cathode, forming the correct metal coating"],a:3,e:"The plating metal's ions must be present in the electrolyte so they can be reduced and deposited as the coating at the cathode."},
+{q:"Why is graphite (carbon) or platinum commonly chosen as an inert electrode in electrolysis experiments?",o:["It is chemically unreactive and does not take part in the electrode reactions, allowing the products of ion discharge to be observed clearly","It is the only material that can conduct electricity when placed in a solution","It dissolves easily, replenishing ions in the electrolyte","It reacts readily with the electrolyte to speed up the reaction"],a:0,e:"Because inert electrodes do not react themselves, any products observed can be attributed purely to the discharge of ions from the electrolyte."},
+{q:"Which half-equation represents the reaction occurring at the anode of a hydrogen-oxygen fuel cell?",o:["Cu<sup>2+</sup> + 2e<sup>-</sup> → Cu","2H<sub>2</sub> + 4OH<sup>-</sup> → 4H<sub>2</sub>O + 4e<sup>-</sup>","O<sub>2</sub> + 2H<sub>2</sub>O + 4e<sup>-</sup> → 4OH<sup>-</sup>","2Cl<sup>-</sup> → Cl<sub>2</sub> + 2e<sup>-</sup>"],a:1,e:"Hydrogen gas is oxidised at the anode, losing electrons as it reacts to form water."},
+{q:"Which half-equation represents the reaction occurring at the cathode of a hydrogen-oxygen fuel cell?",o:["Na<sup>+</sup> + e<sup>-</sup> → Na","2Cl<sup>-</sup> → Cl<sub>2</sub> + 2e<sup>-</sup>","O<sub>2</sub> + 2H<sub>2</sub>O + 4e<sup>-</sup> → 4OH<sup>-</sup>","2H<sub>2</sub> + 4OH<sup>-</sup> → 4H<sub>2</sub>O + 4e<sup>-</sup>"],a:2,e:"Oxygen gas is reduced at the cathode, gaining electrons as it reacts with water to form hydroxide ions."},
+{q:"Why does a hydrogen-oxygen fuel cell continue to produce electricity for as long as fuel is supplied, unlike a simple battery?",o:["Fuel cells generate hydrogen and oxygen internally, so they never require an external fuel supply","Simple batteries also receive a continuous external fuel supply, just like fuel cells","Fuel cells do not actually produce electricity continuously, only in short bursts","Hydrogen and oxygen are continuously fed into the cell from external tanks, rather than relying on a fixed, limited amount of internal chemicals like a battery"],a:3,e:"Since the reactants are supplied continuously from outside the cell, a fuel cell can keep generating electricity as long as fuel keeps flowing in, unlike a battery with fixed internal reactants."},
+];
+
+const HARD = [
+{q:"Explain, using the electrochemical series, why hydrogen rather than sodium is discharged at the cathode during electrolysis of dilute aqueous sodium chloride.",o:["Both sodium and hydrogen ions are discharged at the cathode in equal amounts","Hydrogen ions do not actually exist in aqueous sodium chloride solution","Selective discharge favours the ion of the less reactive element; since hydrogen is lower in the electrochemical series than sodium, hydrogen ions are preferentially reduced at the cathode, leaving sodium ions in solution","Sodium ions are always discharged in preference to hydrogen ions regardless of reactivity"],a:2,e:"The general rule of selective discharge at the cathode is that the less reactive ion (lower in the electrochemical series) is preferentially reduced; hydrogen is less reactive than sodium."},
+{q:"Explain why the high concentration of chloride ions can override the usual selective discharge order at the anode during electrolysis of concentrated aqueous sodium chloride.",o:["Concentration never has any effect on which ion is discharged at the anode","Hydroxide ions are completely removed from concentrated sodium chloride solution","Chlorine gas can only be produced when the solution is extremely dilute","Even though hydroxide ions are normally preferentially discharged in dilute solution, a very high concentration of chloride ions increases their availability at the electrode surface enough to be discharged preferentially instead"],a:3,e:"While the electrochemical series generally predicts hydroxide would be discharged first in dilute solution, a very high concentration of chloride ions can outweigh this factor, resulting in chlorine gas being produced instead."},
+{q:"Using half-equations, explain the overall electrode reactions occurring during the purification of copper by electrolysis, with an impure copper anode and a pure copper cathode.",o:["At the anode: Cu → Cu<sup>2+</sup> + 2e<sup>-</sup> (oxidation, copper dissolves into solution); at the cathode: Cu<sup>2+</sup> + 2e<sup>-</sup> → Cu (reduction, pure copper is deposited)","No electrode reactions occur since copper electrodes are inert","At both electrodes, the same reaction Cu<sup>2+</sup> + 2e<sup>-</sup> → Cu occurs simultaneously","At the anode: Cu<sup>2+</sup> + 2e<sup>-</sup> → Cu; at the cathode: Cu → Cu<sup>2+</sup> + 2e<sup>-</sup>"],a:0,e:"The impure copper anode is oxidised, releasing Cu2+ ions into solution, while the same number of Cu2+ ions are reduced and deposited as pure copper at the cathode."},
+{q:"Explain why the anode used in electroplating must be made of the same metal that is being deposited, for example a silver anode when silver-plating an object.",o:["The anode material has no effect on the electroplating process or the electrolyte concentration","The anode dissolves during electrolysis, continuously replenishing the metal ions in the electrolyte that are being used up as they are deposited at the cathode, keeping the ion concentration roughly constant","Using the same metal as the anode prevents any current from flowing during electroplating","The anode must be inert so that it does not interfere with the plating process at all"],a:1,e:"As metal ions are deposited at the cathode, the dissolving anode replaces them in the electrolyte, maintaining a steady supply of ions for continued plating."},
+{q:"Explain why a hydrogen-oxygen fuel cell is considered more environmentally friendly than burning a fossil fuel to generate electricity.",o:["Fuel cells require fossil fuels as their input, making them equally polluting","Fuel cells cannot generate any usable electricity at all","The fuel cell produces only water as its by-product, with no polluting gases released, and can use continuously supplied fuel rather than depleting a stored chemical resource internally","The fuel cell produces large amounts of carbon dioxide, just like burning fossil fuels"],a:2,e:"Because hydrogen and oxygen combine to form only water, fuel cells avoid the harmful emissions associated with burning fossil fuels."},
+{q:"Explain why active electrodes, rather than inert electrodes, must be used in processes such as electroplating and the purification of copper.",o:["There is no difference between using active or inert electrodes for these processes","Inert electrodes conduct electricity better than active electrodes, making them unsuitable","Active electrodes prevent any electrolysis from occurring at all","The electrode itself must chemically participate in the reaction (dissolving at the anode to supply ions), which inert electrodes cannot do since they do not react"],a:3,e:"Since these processes rely on the anode dissolving to supply metal ions, an active (reactive) electrode is essential; an inert electrode would not dissolve and could not replenish the electrolyte."},
+{q:"Explain why the voltage produced by a simple cell depends on the difference in reactivity between the two metal electrodes used.",o:["A larger difference in reactivity means a greater difference in each metal's tendency to lose electrons, resulting in a greater flow of electrons and a higher voltage between the two electrodes","The voltage produced depends only on the size of the metal electrodes, not their reactivity","All pairs of different metals produce exactly the same voltage regardless of reactivity","Voltage is determined solely by the type of electrolyte used, not the electrodes"],a:0,e:"The more reactive metal loses electrons more readily than the less reactive one; the bigger this difference, the greater the driving force (voltage) for electron flow between them."},
+{q:"In the electrolysis of copper(II) sulfate solution using copper (active) electrodes, explain why the blue colour of the solution remains largely unchanged over time.",o:["The anode produces oxygen gas instead of dissolving, which keeps the solution's colour constant","The rate at which Cu<sup>2+</sup> ions are deposited at the cathode is balanced by the rate at which Cu<sup>2+</sup> ions dissolve from the anode, keeping the concentration of Cu<sup>2+</sup> in solution roughly constant","The blue colour is entirely unrelated to the concentration of copper ions present","Copper ions are not involved in the reaction at either electrode when active electrodes are used"],a:1,e:"Because the active copper anode continuously replenishes Cu2+ ions as they are deposited at the cathode, the overall concentration—and therefore colour—of the solution stays roughly the same."},
+{q:"Explain, in terms of electron transfer, why oxidation always occurs at the anode, whether in an electrolytic cell or a simple cell/battery.",o:["The anode is simply the more positively labelled electrode and has no connection to electron transfer","Oxidation only occurs in electrolytic cells, never in simple cells or batteries","Oxidation is defined as the loss of electrons, and the anode is defined as the electrode at which this loss of electrons takes place, regardless of the type of cell involved","Reduction and oxidation can occur at either electrode randomly depending on the cell type"],a:2,e:"Since 'anode' is defined by the site of electron loss (oxidation), this holds true across both electrolytic cells and simple cells/batteries, regardless of which physical process is producing the current."},
+{q:"Explain, in terms of ion availability, why the concentration of chloride ions in a sodium chloride solution affects whether chlorine or oxygen gas is produced at the anode.",o:["Hydroxide ions increase in number as the solution becomes more concentrated, which is why oxygen is always produced in concentrated solutions","Chloride ion concentration has no effect on which gas is produced at the anode","Chlorine gas can never be produced from an aqueous solution regardless of concentration","In dilute solution, there are relatively few chloride ions available compared to hydroxide ions from water, so hydroxide is preferentially discharged; in concentrated solution, the sheer abundance of chloride ions allows them to be discharged instead, despite hydroxide normally being favoured"],a:3,e:"The balance between the electrochemical series (favouring hydroxide) and the sheer number of available ions (favouring chloride at high concentration) determines which gas is discharged at the anode."},
+{q:"Explain why some impurities in the impure copper anode fall to the bottom of the electrolytic cell as 'anode sludge' during the purification of copper, rather than dissolving into the electrolyte.",o:["Impurities that are less reactive than copper are not oxidised at the anode and simply fall away as a solid sludge, while impurities more reactive than copper dissolve into the electrolyte but are not redeposited at the cathode","Anode sludge is formed only from pure copper that fails to dissolve properly","Impurities more reactive than copper form the anode sludge, while less reactive impurities dissolve into solution","All impurities in the impure copper anode dissolve completely into the electrolyte without exception"],a:0,e:"Impurities less reactive than copper (such as gold or silver) do not get oxidised and drop away as solid sludge, while more reactive impurities dissolve as ions but remain in solution since copper ions are preferentially discharged at the cathode."},
+{q:"Explain why the concentration of a copper(II) sulfate electrolyte would decrease over time if an inert anode is used, but stay constant if a copper (active) anode is used instead.",o:["Both inert and active anodes replenish Cu<sup>2+</sup> ions at exactly the same rate","With an inert anode, oxygen gas is produced from the oxidation of water instead of replenishing Cu<sup>2+</sup> ions, so the concentration of Cu<sup>2+</sup> steadily decreases as it is deposited at the cathode; with a copper anode, dissolving copper continuously replaces the Cu<sup>2+</sup> ions removed at the cathode","An inert anode always increases the concentration of Cu<sup>2+</sup> ions over time","The type of anode used has no effect on the concentration of the electrolyte"],a:1,e:"Since an inert anode does not dissolve to release Cu2+ ions, the concentration of copper ions falls as they are deposited at the cathode; an active copper anode continuously replaces these ions, keeping the concentration constant."},
+{q:"Explain why molten lead(II) bromide can be electrolysed to produce lead and bromine, but solid lead(II) bromide cannot be electrolysed at all.",o:["Electrolysis only requires an electrolyte to be coloured, not molten or dissolved","Lead(II) bromide conducts electricity equally well in both the solid and molten states","In the solid state, the ions are held in fixed positions within the ionic lattice and cannot move to carry charge; upon melting, the ions become free to move to the electrodes, allowing electrolysis to occur","Solid lead(II) bromide contains no ions at all, unlike the molten form"],a:2,e:"Electrolysis requires mobile ions to carry the current and move to the electrodes; this mobility only exists once the rigid solid lattice is broken down by melting (or dissolving)."},
+{q:"Explain why the total mass of the electrolyte solution remains essentially constant when copper electrodes are used to electrolyse copper(II) sulfate solution, even though ions are continuously being transferred.",o:["Copper ions are destroyed at the cathode, permanently reducing the mass of the electrolyte","No ions are actually transferred when active electrodes are used, so the mass cannot change","The mass of the electrolyte always increases steadily throughout electrolysis with active electrodes","For every Cu<sup>2+</sup> ion deposited at the cathode, one Cu<sup>2+</sup> ion enters the solution from the dissolving anode, so the overall ion concentration and mass of the electrolyte remain essentially unchanged"],a:3,e:"Because the rate of Cu2+ ions entering solution from the anode matches the rate of Cu2+ ions leaving solution at the cathode, the total amount of dissolved copper (and thus the electrolyte's mass) stays roughly constant."},
+{q:"Explain the difference between using inert and active electrodes on copper(II) sulfate solution, in terms of how the electrolyte's concentration and colour change over time.",o:["With active copper electrodes, the concentration and blue colour remain roughly constant since the dissolving anode replaces deposited ions; with inert electrodes, the concentration decreases and the colour fades since deposited Cu<sup>2+</sup> ions are not replenished","Inert electrodes keep the concentration constant, while active electrodes cause it to decrease","Both inert and active electrodes cause the same steady decrease in concentration and colour over time","Active electrodes always cause a rapid increase in colour intensity, while inert electrodes cause no change at all"],a:0,e:"The key distinction is that active copper electrodes replenish the Cu2+ ions being removed at the cathode, while inert electrodes cannot, leading to a steady decrease in Cu2+ concentration and fading colour."},
+{q:"With reference to oxidation states, explain why hydrogen gas is oxidised at the anode of a hydrogen-oxygen fuel cell.",o:["Hydrogen changes from an oxidation state of +1 to 0, meaning it has gained electrons, which is the definition of oxidation","Hydrogen changes from an oxidation state of 0 in H<sub>2</sub> gas to +1 when combined in water, meaning it has lost electrons, which is the definition of oxidation","Hydrogen's oxidation state does not change at all during the reaction in a fuel cell","Hydrogen changes from an oxidation state of 0 to -1, meaning it has gained electrons"],a:1,e:"An increase in oxidation state from 0 to +1 corresponds to a loss of electrons, confirming that hydrogen is oxidised at the anode."},
+{q:"With reference to oxidation states, explain why oxygen gas is reduced at the cathode of a hydrogen-oxygen fuel cell.",o:["Oxygen changes from an oxidation state of 0 to +2, meaning it has lost electrons","Oxygen changes from an oxidation state of -2 to 0, meaning it has lost electrons, which is the definition of reduction","Oxygen changes from an oxidation state of 0 in O<sub>2</sub> gas to -2 when combined in water/hydroxide ions, meaning it has gained electrons, which is the definition of reduction","Oxygen's oxidation state remains unchanged throughout the reaction in a fuel cell"],a:2,e:"A decrease in oxidation state from 0 to -2 corresponds to a gain of electrons, confirming that oxygen is reduced at the cathode."},
+{q:"Explain why a hydrogen-oxygen fuel cell is generally considered more energy-efficient than burning the fuel directly to generate electricity via a heat engine and generator.",o:["Fuel cells and heat engines convert chemical energy into electricity by exactly the same process","Fuel cells produce far more heat than a heat engine, making them more efficient overall","Burning fuel directly converts 100% of the chemical energy into electricity with no losses","A fuel cell converts chemical energy directly into electrical energy, avoiding the intermediate step of producing heat and then converting that heat into electricity, which involves energy losses at each stage"],a:3,e:"Direct conversion of chemical to electrical energy in a fuel cell avoids the multiple energy losses associated with the heat-based conversion pathway of a conventional generator."},
+{q:"Explain why the same general half-equation, Cu<sup>2+</sup> + 2e<sup>-</sup> → Cu, can apply to both an electrolytic cell (such as copper purification) and a simple cell, despite these two types of cells having very different purposes.",o:["The definitions of oxidation (loss of electrons) and reduction (gain of electrons) at the anode and cathode remain the same in any electrochemical system, regardless of whether the cell requires an external electrical supply (electrolysis) or generates its own electricity (simple cell)","Simple cells never involve the reduction of copper ions under any circumstances","This half-equation can only ever apply to electrolytic cells, never to simple cells","Electrolytic cells and simple cells are fundamentally identical processes with no meaningful differences"],a:0,e:"Since oxidation and reduction are defined purely in terms of electron transfer at each electrode, the same half-equations can describe electrode reactions in both spontaneous (simple cell) and non-spontaneous (electrolytic) systems."},
+];
+
+
+/* ============ STAGE CONFIG ============ */
+const STAGES = [
+  {key:"friendly1", label:"Friendly", pool:"EASY"},
+  {key:"friendly2", label:"Friendly", pool:"EASY"},
+  {key:"group1", label:"Group Stage", pool:"EASY"},
+  {key:"group2",    label:"Group Stage",   pool:"MEDIUM"},
+  {key:"group3",    label:"Group Stage",    pool:"MEDIUM"},
+  {key:"r32",    label:"Round of 32",    pool:"MEDIUM"},
+  {key:"r16",    label:"Round of 16",    pool:"MEDIUM"},
+  {key:"quarter-final",    label:"Quarter-final",    pool:"HARD"},
+  {key:"semi-final", label:"Semi-final", pool:"HARD"},
+  {key:"final", label:"Final", pool:"HARD"},
+];
+const BRACKET_GROUPS = [
+  {label:"FRIENDLY",count:2},{label:"GROUP",count:3},{label:"R32",count:1},{label:"R16",count:1},{label:"QF",count:1},{label:"SF",count:1},{label:"FINAL",count:1}
+];
+
+/* ============ STATE ============ */
+let state = {
+  screen:"start", // start | play | elim | win
+  country:null,
+  timerEnabled:false,
+  stageIdx:0,
+  usedQ:new Set(),
+  currentQ:null,
+  currentOpponent:null,
+  varUsed:false,
+  subUsed:false,
+  answered:false,
+  selectedOpt:null, // index of the option tapped
+  fadedOpts:[], // indices of options removed by VAR Review (50/50)
+  timeLeft:20,
+  timerId:null,
+  commentary:null, // {type:'good'|'bad', scoreText, statusText}
+  matchResult:null, // {scoreText, countryScorers, opponentScorers, countryWins}
+};
+
+function pickQuestion(poolName){
+  const pool = poolName==="EASY"?EASY:poolName==="MEDIUM"?MEDIUM:HARD;
+  let available = pool.map((q,i)=>({...q,_id:poolName+i})).filter(q=>!state.usedQ.has(q._id));
+  if(available.length===0){ state.usedQ.clear(); available = pool.map((q,i)=>({...q,_id:poolName+i})); }
+  const pick = available[Math.floor(Math.random()*available.length)];
+  state.usedQ.add(pick._id);
+  return pick;
+}
+
+function randomOpponent(){
+  const others = COUNTRIES.filter(c=>c.code!==state.country.code);
+  return others[Math.floor(Math.random()*others.length)];
+}
+
+function startTournament(){
+  state.stageIdx = 0;
+  state.varUsed = false;
+  state.subUsed = false;
+  state.usedQ.clear();
+  loadStage();
+}
+
+function loadStage(){
+  const stage = STAGES[state.stageIdx];
+  state.currentQ = pickQuestion(stage.pool);
+  state.currentOpponent = randomOpponent();
+  state.answered = false;
+  state.selectedOpt = null;
+  state.fadedOpts = [];
+  state.commentary = null;
+  state.matchResult = null;
+  state.screen = "play";
+  if(state.timerEnabled){
+    state.timeLeft = 20;
+    clearInterval(state.timerId);
+    state.timerId = setInterval(()=>{
+      state.timeLeft--;
+      if(state.timeLeft<=0){
+        clearInterval(state.timerId);
+        if(!state.answered) handleAnswer(-1, true);
+      } else {
+        renderTimerOnly();
+      }
+    },1000);
+  }
+  render();
+}
+
+function handleAnswer(idx, timedOut){
+  if(state.answered) return;
+  state.answered = true;
+  clearInterval(state.timerId);
+  state.selectedOpt = idx;
+  const correct = !timedOut && idx === state.currentQ.a;
+  const result = generateMatchResult(state.country, state.currentOpponent, correct);
+  state.matchResult = result;
+  if(correct){
+    const isFinalWin = state.stageIdx === STAGES.length-1;
+    state.commentary = {type:"good", scoreText: result.scoreText, statusText: isFinalWin ? `FULL-TIME — ${state.country.name.toUpperCase()} WINS THE WORLD CUP!` : "FULL-TIME — THROUGH TO THE NEXT ROUND!"};
+    spawnFloaty("⚽");
+    spawnFloaty("🎉");
+  } else {
+    state.commentary = {type:"bad", scoreText: result.scoreText, statusText: (timedOut?"⏱ TIME'S UP! ":"")+"FULL-TIME — ELIMINATED"};
+  }
+  render();
+  setTimeout(()=>{
+    if(correct){
+      if(state.stageIdx === STAGES.length-1){
+        state.screen = "win";
+        launchConfetti();
+        render();
+      } else {
+        state.stageIdx++;
+        loadStage();
+      }
+    } else {
+      state.screen = "elim";
+      render();
+    }
+  }, 2600);
+}
+
+function useVAR(){
+  if(state.varUsed || state.answered) return;
+  state.varUsed = true;
+  const wrongIdx = state.currentQ.o.map((_,i)=>i).filter(i=>i!==state.currentQ.a);
+  wrongIdx.sort(()=>Math.random()-0.5);
+  state.fadedOpts = wrongIdx.slice(0,2);
+  render();
+}
+function useSub(){
+  if(state.subUsed || state.answered) return;
+  state.subUsed = true;
+  state.answered = true;
+  clearInterval(state.timerId);
+  state.commentary = {type:"good", statusText:"🔄 SUBSTITUTION MADE — Auto-advance to the next round!"};
+  state.matchResult = null;
+  render();
+  setTimeout(()=>{
+    if(state.stageIdx === STAGES.length-1){
+      state.screen = "win";
+      launchConfetti();
+      render();
+    } else {
+      state.stageIdx++;
+      loadStage();
+    }
+  }, 1300);
+}
+
+function restartFromGroup(){
+  state.stageIdx = 0;
+  state.varUsed = false;
+  state.subUsed = false;
+  loadStage();
+}
+function goToStart(){
+  state.screen = "start";
+  state.country = null;
+  render();
+}
+
+/* ============ FX ============ */
+function spawnFloaty(emoji){
+  const el = document.createElement("div");
+  el.className = "floaty";
+  el.textContent = emoji;
+  el.style.left = (40+Math.random()*20)+"%";
+  el.style.bottom = "30%";
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(),1500);
+}
+function launchConfetti(){
+  const colors=["#f5c542","#3fce7a","#8ecae6","#e63946","#ffffff"];
+  for(let i=0;i<80;i++){
+    setTimeout(()=>{
+      const el = document.createElement("div");
+      el.className="confetti-piece";
+      el.style.left = Math.random()*100+"vw";
+      el.style.background = colors[Math.floor(Math.random()*colors.length)];
+      el.style.animationDuration = (2.5+Math.random()*2)+"s";
+      document.body.appendChild(el);
+      setTimeout(()=>el.remove(),5000);
+    }, i*30);
+  }
+}
+
+/* ============ RENDER ============ */
+function render(){
+  const app = document.getElementById("app");
+  if(state.screen==="start") app.innerHTML = renderStart();
+  else if(state.screen==="play") app.innerHTML = renderPlay();
+  else if(state.screen==="elim") app.innerHTML = renderElim();
+  else if(state.screen==="win") app.innerHTML = renderWin();
+  attachHandlers();
+}
+function renderTimerOnly(){
+  const bar = document.getElementById("timerbar");
+  const txt = document.getElementById("timertxt");
+  if(bar){ bar.style.width = (state.timeLeft/20*100)+"%"; }
+  if(txt){ txt.textContent = state.timeLeft+"s"; }
+}
+
+function renderHeader(sub){
+  return `<div class="stadium-header">
+    <div class="eyebrow">⚽ CHEMISTRY REVISION ARENA</div>
+    <h1>FIFA WORLD CUP 2026</h1>
+    <p>${sub}</p>
+  </div>`;
+}
+
+function renderStart(){
+  const grid = COUNTRIES.map(c=>`
+    <div class="country-cell ${state.country && state.country.code===c.code?'selected':''}" data-code="${c.code}">
+      <div class="flag-badge">${flagImgTag(c.code,c.name)}</div>
+      <div class="cname">${c.name}</div>
+    </div>`).join("");
+  return `
+    ${renderHeader("ELECTROCHEMISTRY")}
+    <div class="panel">
+      <h3 style="margin-bottom:10px;">1. Choose your country</h3>
+      <input class="country-search" id="search" placeholder="Search countries...">
+      <div class="country-grid" id="grid">${grid}</div>
+    </div>
+    <div class="panel">
+      <h3 style="margin-bottom:6px;">2. Match settings</h3>
+      <div class="options-row">
+        <div class="toggle-wrap">
+          <label class="switch"><input type="checkbox" id="timerToggle" ${state.timerEnabled?'checked':''}><span class="slider-tog"></span></label>
+          <span>20-second shot clock per question (bonus flair)</span>
+        </div>
+      </div>
+      <p style="font-size:13px;color:var(--muted);line-height:1.5;margin-top:10px;">
+        🏟️ 10 correct answers in a row wins the Cup: <b>Friendlies (2)</b> → <b>Group Stage (3)</b> → <b>Round of 32 (1)</b> → <b>Round of 16 (1)</b> → <b>Quarter-final (1)</b> → <b>Semi-final (1)</b> → <b>Final (1)</b>.<br>
+        🟥 One wrong answer = <b>eliminated</b> — back to the Friendlies.<br>
+        🎫 Each run you get one <b>VAR Review</b> (reveals a hint) and one <b>Substitution</b> (auto-skip a question).
+      </p>
+      <button class="btn" id="kickoffBtn" ${!state.country?'disabled':''} style="margin-top:14px;">KICK OFF ${state.country?flagInlineTag(state.country.code,state.country.name):''}</button>
+    </div>
+    <div class="footer-note"></div>
+  `;
+}
+
+function renderBracket(){
+  let flatIdx = 0;
+  return `<div class="bracket">${BRACKET_GROUPS.map(g=>{
+    let groupDone = true, groupCurrent=false;
+    for(let i=0;i<g.count;i++){
+      if(flatIdx > state.stageIdx) groupDone=false;
+      if(flatIdx === state.stageIdx) groupCurrent=true;
+      flatIdx++;
+    }
+    const cls = groupCurrent?"current":(groupDone?"done":"");
+    return `<div class="bracket-stage ${cls}"><div class="bracket-line"></div><div class="dot"></div><div class="lbl">${g.label}</div></div>`;
+  }).join("")}</div>`;
+}
+
+function renderGoalMeter(){
+  const pct = (state.stageIdx/10)*100;
+  return `<div class="goalmeter-wrap">
+    <div class="goalmeter-label"><span>STREAK</span><span>${state.stageIdx} / 10 WINS</span></div>
+    <div class="goalmeter">
+      <div class="goalmeter-fill" style="width:${pct}%"></div>
+      <div class="goalmeter-ball" style="left:${pct}%">⚽</div>
+    </div>
+  </div>`;
+}
+
+function renderPlay(){
+  const stage = STAGES[state.stageIdx];
+  const q = state.currentQ;
+  const opp = state.currentOpponent;
+
+  const optsHtml = q.o.map((opt,i)=>{
+    let cls = "opt";
+    if(state.fadedOpts.includes(i)) cls += " faded";
+    if(state.answered){
+      if(i===q.a) cls += " correct";
+      else if(i===state.selectedOpt) cls += " wrong";
+    }
+    const disabled = state.answered || state.fadedOpts.includes(i);
+    return `<button class="${cls}" data-idx="${i}" ${disabled?'disabled':''}>
+      <span class="optkey">${String.fromCharCode(65+i)}</span><span>${opt}</span>
+    </button>`;
+  }).join("");
+
+  const commentaryHtml = state.commentary?`<div class="commentary ${state.commentary.type}">
+      <div class="status-line">${state.commentary.statusText}</div>
+    </div>`:"";
+  const explainHtml = state.answered? `<div class="explain-box">💡 ${q.e}</div>` : "";
+  const timerHtml = state.timerEnabled? `
+    <div class="timer-bar-wrap"><div class="timer-bar" id="timerbar" style="width:${(state.timeLeft/20*100)}%"></div></div>
+  `:"";
+
+  const mr = state.matchResult;
+  const showScore = state.answered && mr;
+  const countryScorersHtml = showScore ? `<div class="scorer-list">${scorerListHtml(mr.countryScorers)}</div>` : "";
+  const opponentScorersHtml = showScore ? `<div class="scorer-list">${scorerListHtml(mr.opponentScorers)}</div>` : "";
+  const countryScoreHtml = showScore ? `<div class="score-num">${mr.countryGoals}</div>` : "";
+  const opponentScoreHtml = showScore ? `<div class="score-num">${mr.opponentGoals}</div>` : "";
+  const centerHtml = showScore ? `<div class="vs dash">–</div>` : `<div class="vs">VS</div>`;
+
+  return `
+    ${renderHeader(state.country.name+" "+flagInlineTag(state.country.code,state.country.name)+" — chasing the World Cup")}
+    <div class="panel">
+      ${renderBracket()}
+      ${renderGoalMeter()}
+      <div class="stage-tag">${stage.label.toUpperCase()} — MATCH ${state.stageIdx+1} OF 10</div>
+      <div class="match-row">
+        <div class="team">
+          <div class="flag-score-row">
+            <div class="flag-badge">${flagImgTag(state.country.code,state.country.name)}</div>
+            ${countryScoreHtml}
+          </div>
+          <div class="tname">${state.country.name}</div>
+          ${countryScorersHtml}
+        </div>
+        ${centerHtml}
+        <div class="team">
+          <div class="flag-score-row">
+            ${opponentScoreHtml}
+            <div class="flag-badge">${flagImgTag(opp.code,opp.name)}</div>
+          </div>
+          <div class="tname">${opp.name}</div>
+          ${opponentScorersHtml}
+        </div>
+      </div>
+      ${timerHtml}
+      ${commentaryHtml}
+      <div class="qcard">
+        <div class="qtext">${q.q}</div>
+        <div class="options">${optsHtml}</div>
+      </div>
+      ${explainHtml}
+      <div class="lifelines">
+        <button class="life-btn" id="varBtn" ${state.varUsed||state.answered?'disabled':''}>🔍 VAR REVIEW (50/50)${state.varUsed?' — used':''}</button>
+        <button class="life-btn" id="subBtn" ${state.subUsed||state.answered?'disabled':''}>🔄 SUBSTITUTION (skip)${state.subUsed?' — used':''}</button>
+      </div>
+    </div>
+  `;
+}
+
+function renderElim(){
+  return `
+    ${renderHeader("Match day heartbreak")}
+    <div class="panel elim-screen">
+      <div class="redcard"></div>
+      <h2 style="color:var(--red-card); font-size:32px;">ELIMINATED</h2>
+      <p style="color:var(--muted); margin:10px 0 20px;">${state.country.name} ${flagInlineTag(state.country.code,state.country.name)} crash out in the ${STAGES[state.stageIdx].label}. Time to regroup and go again from the Friendlies.</p>
+      <div class="explain-box">💡 ${state.currentQ.e}</div>
+      <button class="btn" id="retryBtn">BACK TO THE FRIENDLIES</button>
+      <button class="btn secondary" id="changeCountryBtn" style="margin-top:10px;">CHOOSE A DIFFERENT COUNTRY</button>
+    </div>
+  `;
+}
+
+function renderWin(){
+  return `
+    ${renderHeader("")}
+    <div class="panel win-screen">
+      <img class="trophy-img" src="https://ngchb.github.io/WorldCup26/Cup.png" alt="World Cup Trophy">
+      <h2>${state.country.name} ${flagInlineTag(state.country.code,state.country.name)}<br>ARE CHAMPIONS!</h2>
+      <p style="color:var(--muted);">10 correct answers in a row. Perfect run through every round.</p>
+      <div class="win-stat">
+        <div><b>10/10</b><span>MATCHES WON</span></div>
+        <div><b>${state.varUsed?1:0}</b><span>VAR USED</span></div>
+        <div><b>${state.subUsed?1:0}</b><span>SUBS USED</span></div>
+      </div>
+      <button class="btn" id="playAgainBtn">DEFEND THE TITLE — PLAY AGAIN</button>
+      <button class="btn secondary" id="newCountryBtn" style="margin-top:10px;">PLAY AS ANOTHER COUNTRY</button>
+    </div>
+  `;
+}
+
+/* ============ HANDLERS ============ */
+function attachHandlers(){
+  if(state.screen==="start"){
+    document.querySelectorAll(".country-cell").forEach(el=>{
+      el.onclick = (evt)=>{
+        evt.preventDefault();
+        const gridEl = document.getElementById("grid");
+        const savedScroll = gridEl ? gridEl.scrollTop : 0;
+
+        state.country = COUNTRIES.find(c=>c.code===el.dataset.code);
+        // Update selection + kickoff button in place instead of calling render(),
+        // so the scrollable country list doesn't jump back to the top.
+        document.querySelectorAll(".country-cell.selected").forEach(sel=>sel.classList.remove("selected"));
+        el.classList.add("selected");
+        const kickoff = document.getElementById("kickoffBtn");
+        if(kickoff){
+          kickoff.disabled = false;
+          kickoff.innerHTML = "KICK OFF "+flagInlineTag(state.country.code,state.country.name);
+        }
+
+        // Belt-and-braces: force the scroll position back in case any reflow
+        // (e.g. mobile webview quirks) resets it, on this frame and the next.
+        if(gridEl){
+          gridEl.scrollTop = savedScroll;
+          requestAnimationFrame(()=>{ gridEl.scrollTop = savedScroll; });
+          setTimeout(()=>{ gridEl.scrollTop = savedScroll; }, 50);
+        }
+      };
+    });
+    const search = document.getElementById("search");
+    if(search){
+      search.oninput = ()=>{
+        const val = search.value.toLowerCase();
+        document.querySelectorAll(".country-cell").forEach(cell=>{
+          const name = cell.querySelector(".cname").textContent.toLowerCase();
+          cell.style.display = name.includes(val)?"flex":"none";
+        });
+      };
+    }
+    const timerToggle = document.getElementById("timerToggle");
+    if(timerToggle) timerToggle.onchange = ()=>{ state.timerEnabled = timerToggle.checked; };
+    const kickoff = document.getElementById("kickoffBtn");
+    if(kickoff) kickoff.onclick = ()=>{ if(state.country) startTournament(); };
+  }
+  if(state.screen==="play"){
+    document.querySelectorAll(".opt").forEach(el=>{
+      el.onclick = ()=>{ if(!state.answered) handleAnswer(parseInt(el.dataset.idx), false); };
+    });
+    const varBtn = document.getElementById("varBtn");
+    if(varBtn) varBtn.onclick = useVAR;
+    const subBtn = document.getElementById("subBtn");
+    if(subBtn) subBtn.onclick = useSub;
+  }
+  if(state.screen==="elim"){
+    document.getElementById("retryBtn").onclick = restartFromGroup;
+    document.getElementById("changeCountryBtn").onclick = goToStart;
+  }
+  if(state.screen==="win"){
+    document.getElementById("playAgainBtn").onclick = startTournament;
+    document.getElementById("newCountryBtn").onclick = goToStart;
+  }
+}
+
+render();
+</script>
+</body>
+</html>
